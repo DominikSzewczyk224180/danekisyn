@@ -50,18 +50,24 @@
     </div>
   </div>
   <script>
-    // Na adresie typu uzytkownik.github.io/repozytorium/ strona główna leży w podfolderze repozytorium
+    // Działa pod własną domeną, pod login.github.io i pod login.github.io/repozytorium/
     (function () {
-      var base = "/";
-      if (/\.github\.io$/.test(location.hostname)) {
-        var first = location.pathname.split("/")[1];
-        if (first) base = "/" + first + "/";
-      }
       var a = document.querySelector("[data-home]");
-      a.href = base + a.getAttribute("data-home");
-      var icon = document.createElement("link");
-      icon.rel = "icon"; icon.type = "image/svg+xml"; icon.href = base + "assets/img/favicon.svg";
-      document.head.appendChild(icon);
+      function setBase(base) {
+        a.href = base + a.getAttribute("data-home");
+        var icon = document.createElement("link");
+        icon.rel = "icon"; icon.type = "image/svg+xml"; icon.href = base + "assets/img/favicon.svg";
+        document.head.appendChild(icon);
+      }
+      var first = location.pathname.split("/")[1];
+      if (/\.github\.io$/.test(location.hostname) && first) {
+        var candidate = "/" + first + "/";
+        fetch(candidate + "index.html", { method: "HEAD" })
+          .then(function (r) { setBase(r.ok ? candidate : "/"); })
+          .catch(function () { setBase("/"); });
+      } else {
+        setBase("/");
+      }
     })();
   </script>
 </body>

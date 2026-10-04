@@ -211,12 +211,13 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
 
 
 /* auto zaparkowane pod szyldem, jak na ich zdjęciach; koła stoją na linii nad faktami */
-.hero__car { grid-area: car; align-self: end; justify-self: end; width: 114%; max-width: 760px; height: auto; margin: clamp(24px, 3.5vw, 48px) -14% 0 0; overflow: visible; }
+.hero__car { grid-area: car; align-self: end; justify-self: end; width: 112%; max-width: 680px; height: auto; margin: clamp(24px, 3.5vw, 48px) 0 0 -12%; overflow: visible; }
 .hero__car .c-body { fill: rgba(16, 18, 21, .62); stroke: rgba(243, 242, 238, .46); stroke-width: 2.2; stroke-linejoin: round; }
 .hero__car .c-glass { fill: url(#car-glass); stroke: rgba(243, 242, 238, .3); stroke-width: 1.8; stroke-linejoin: round; }
 .hero__car .c-pillar { fill: rgba(10, 11, 13, .9); }
 .hero__car .c-line { fill: none; stroke: rgba(243, 242, 238, .22); stroke-width: 1.8; stroke-linecap: round; }
 .hero__car .c-line--strong { stroke: rgba(243, 242, 238, .4); stroke-width: 3; }
+.hero__car .c-well { fill: rgba(8, 9, 11, .92); }
 .hero__car .c-mirror { fill: rgba(16, 18, 21, .9); stroke: rgba(243, 242, 238, .32); stroke-width: 1.6; }
 .hero__car .c-tire { fill: #111315; stroke: rgba(243, 242, 238, .34); stroke-width: 2; }
 .hero__car .c-rim { fill: none; stroke: rgba(243, 242, 238, .42); stroke-width: 1.8; }
@@ -228,7 +229,7 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
 .hero__car .c-beam { opacity: .55; }
 .hero__car [pathLength] { stroke-dasharray: 1; animation: car-draw 2s var(--ease) .35s backwards; }
 .hero__car .c-body, .hero__car .c-glass, .hero__car .c-tire, .hero__car .c-mirror { animation: car-draw 2s var(--ease) .35s backwards, car-fill .9s ease 1.7s backwards; }
-.hero__car .c-pillar, .hero__car .c-hub, .hero__car .c-spoke, .hero__car .c-line--strong, .hero__car .c-rim--thin { animation: car-fade .9s ease 1.7s backwards; }
+.hero__car .c-well, .hero__car .c-pillar, .hero__car .c-hub, .hero__car .c-spoke, .hero__car .c-line--strong, .hero__car .c-rim--thin { animation: car-fade .9s ease 1.7s backwards; }
 .hero__car .c-head, .hero__car .c-tail, .hero__car .c-beam, .hero__car .c-shadow { animation: car-fade .7s ease 2.15s backwards; }
 @keyframes car-draw { from { stroke-dashoffset: 1; } }
 @keyframes car-fill { from { fill-opacity: 0; } }

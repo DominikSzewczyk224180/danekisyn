@@ -111,7 +111,7 @@ GitHub Action uruchamiany na przykład co godzinę pobiera ogłoszenia komisu (o
 * Brak plików cookies analitycznych i reklamowych. Mapa Google ładuje się dopiero po kliknięciu.
 * Link do konkretnego auta: `#auto-ID` (otwiera okno ze szczegółami, działa przy udostępnianiu).
 * Status „Otwarte / Zamknięte” liczony jest w czasie polskim, niezależnie od strefy czasowej odwiedzającego. Godziny zmienisz w `config.js` (i w tabeli godzin w `index.html`).
-* `404.html` zakłada stronę pod własną domeną albo pod adresem repozytorium `login.github.io/repozytorium/`.
+* `404.html` sam rozpoznaje, czy strona działa pod własną domeną, pod `login.github.io`, czy w podfolderze repozytorium.
 
 ## Licencje
 
