@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Po podpięciu własnej domeny odkomentuj i wpisz adres:
+# Sitemap: https://www.TWOJA-DOMENA.pl/sitemap.xml

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nie ma takiej strony | Auto Komis Danek &amp; Syn</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1D2024">
+  <!-- Strona samowystarczalna: GitHub Pages pokazuje ją pod dowolnym błędnym adresem, więc nie polega na ścieżkach względnych -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; display: grid; place-items: center; padding: 32px 20px;
+      background: radial-gradient(60% 50% at 50% 0%, rgba(231, 188, 48, .08), transparent 70%), #2B2F35;
+      color: #F3F2EE; font: 400 1.0625rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; text-align: center;
+    }
+    .box { max-width: 560px; }
+    .plate {
+      position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .15em;
+      padding: .18em .7em .14em; margin-bottom: 36px;
+      border: 3px solid transparent; border-radius: 14px;
+      background: linear-gradient(180deg, #25282d, #15171a 52%, #0e0f11) padding-box,
+                  linear-gradient(160deg, #eceef0, #8b9098 20%, #2c2f34 48%, #a7acb3 76%, #eceef0) border-box;
+      color: #E7BC30; font: 700 clamp(4.5rem, 3rem + 8vw, 7.5rem)/1 "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif; letter-spacing: .04em;
+      box-shadow: 0 40px 60px -36px rgba(0, 0, 0, .9);
+      transform: perspective(900px) rotateX(6deg) rotateY(-10deg);
+    }
+    .plate::before { content: ""; position: absolute; inset: 7px; border: 1.5px solid rgba(231, 188, 48, .5); border-radius: 8px; }
+    h1 { margin: 0 0 12px; font: 600 clamp(2rem, 1.4rem + 2.6vw, 3rem)/1.05 "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif; }
+    p { margin: 0 0 28px; color: #C9CCD1; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    a.btn { display: inline-flex; align-items: center; min-height: 52px; padding: .7em 1.4em; border-radius: 8px; font-weight: 600; text-decoration: none; }
+    .gold { background: #E7BC30; color: #1D2024; }
+    .gold:hover { background: #F3CC4B; }
+    .ghost { color: #F3F2EE; box-shadow: inset 0 0 0 1.5px rgba(243, 242, 238, .3); }
+    .ghost:hover { box-shadow: inset 0 0 0 1.5px #F3F2EE; }
+    a:focus-visible { outline: 2px solid #E7BC30; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { .plate { transform: none; } }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="plate" aria-hidden="true">404</div>
+    <h1>Tej strony nie ma na naszym placu</h1>
+    <p>Możliwe, że auto zostało już sprzedane albo adres zawiera literówkę. Aktualną ofertę znajdziesz na stronie głównej.</p>
+    <div class="actions">
+      <a class="btn gold" href="/" data-home="#oferta">Zobacz auta na placu</a>
+      <a class="btn ghost" href="tel:+48792624919">Zadzwoń: 792&nbsp;624&nbsp;919</a>
+    </div>
+  </div>
+  <script>
+    // Na adresie typu uzytkownik.github.io/repozytorium/ strona główna leży w podfolderze repozytorium
+    (function () {
+      var base = "/";
+      if (/\.github\.io$/.test(location.hostname)) {
+        var first = location.pathname.split("/")[1];
+        if (first) base = "/" + first + "/";
+      }
+      var a = document.querySelector("[data-home]");
+      a.href = base + a.getAttribute("data-home");
+      var icon = document.createElement("link");
+      icon.rel = "icon"; icon.type = "image/svg+xml"; icon.href = base + "assets/img/favicon.svg";
+      document.head.appendChild(icon);
+    })();
+  </script>
+</body>
+</html>
