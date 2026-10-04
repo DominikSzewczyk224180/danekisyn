@@ -179,11 +179,17 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
     radial-gradient(70% 90% at 78% 0%, rgba(231, 188, 48, .07), transparent 70%),
     linear-gradient(180deg, #2E3238 0%, var(--antracyt) 100%);
 }
-.hero__grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); align-items: center; gap: clamp(40px, 6vw, 96px); }
-.hero__title { font-size: clamp(3.5rem, 1.4rem + 7.4vw, 8rem); line-height: .9; letter-spacing: -.012em; max-width: 9.5em; }
+.hero__grid {
+  display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  grid-template-areas: "copy stage" "copy car" "ground ground";
+  column-gap: clamp(40px, 6vw, 96px); row-gap: 0;
+}
+.hero__copy { grid-area: copy; align-self: center; min-width: 0; }
+.hero__stage { grid-area: stage; }
+.hero__title { font-size: clamp(3rem, 5.6vw, 5.1rem); line-height: .94; letter-spacing: -.01em; }
 .hero__lead { max-width: 33em; margin: 1.6rem 0 0; font-size: clamp(1.125rem, 1rem + .45vw, 1.35rem); line-height: 1.5; color: var(--mgla-jasna); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2.25rem; }
-.hero__facts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 14px 40px; margin: clamp(8px, 2vw, 24px) 0 0; padding: 1.4rem 0 0; border-top: 1px solid var(--line); list-style: none; font-size: .9688rem; color: var(--mgla-jasna); }
+.hero__facts { grid-area: ground; position: relative; display: flex; flex-wrap: wrap; gap: 14px 40px; margin: 0; padding: 1.4rem 0 0; border-top: 1px solid rgba(243, 242, 238, .16); list-style: none; font-size: .9688rem; color: var(--mgla-jasna); }
 .hero__facts li { display: flex; align-items: center; gap: .55em; }
 .hero__facts svg { width: 20px; height: 20px; color: var(--szyld); flex: none; }
 .hero__facts-rating { display: inline-flex; align-items: center; gap: .3em; color: var(--rama); }
@@ -203,7 +209,30 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
 .lamp__beam::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255, 228, 160, .26), rgba(255, 228, 160, .08) 55%, rgba(255, 228, 160, 0)); clip-path: polygon(41% 0, 59% 0, 100% 100%, 0 100%); }
 .hero__stage .plate--hero { z-index: 1; }
 
-.hero__caption { max-width: 25em; margin: 44px 0 0; text-align: center; font-size: .9688rem; color: var(--mgla); }
+
+/* auto zaparkowane pod szyldem, jak na ich zdjęciach; koła stoją na linii nad faktami */
+.hero__car { grid-area: car; align-self: end; justify-self: end; width: 114%; max-width: 760px; height: auto; margin: clamp(24px, 3.5vw, 48px) -14% 0 0; overflow: visible; }
+.hero__car .c-body { fill: rgba(16, 18, 21, .62); stroke: rgba(243, 242, 238, .46); stroke-width: 2.2; stroke-linejoin: round; }
+.hero__car .c-glass { fill: url(#car-glass); stroke: rgba(243, 242, 238, .3); stroke-width: 1.8; stroke-linejoin: round; }
+.hero__car .c-pillar { fill: rgba(10, 11, 13, .9); }
+.hero__car .c-line { fill: none; stroke: rgba(243, 242, 238, .22); stroke-width: 1.8; stroke-linecap: round; }
+.hero__car .c-line--strong { stroke: rgba(243, 242, 238, .4); stroke-width: 3; }
+.hero__car .c-mirror { fill: rgba(16, 18, 21, .9); stroke: rgba(243, 242, 238, .32); stroke-width: 1.6; }
+.hero__car .c-tire { fill: #111315; stroke: rgba(243, 242, 238, .34); stroke-width: 2; }
+.hero__car .c-rim { fill: none; stroke: rgba(243, 242, 238, .42); stroke-width: 1.8; }
+.hero__car .c-rim--thin { stroke: rgba(243, 242, 238, .14); }
+.hero__car .c-hub { fill: rgba(243, 242, 238, .35); }
+.hero__car .c-spoke { fill: none; stroke: rgba(243, 242, 238, .34); stroke-width: 2.4; stroke-linecap: round; }
+.hero__car .c-head { fill: none; stroke: #FFEBB8; stroke-width: 4.5; stroke-linecap: round; }
+.hero__car .c-tail { fill: none; stroke: #E5735C; stroke-width: 3.5; stroke-linecap: round; opacity: .8; }
+.hero__car .c-beam { opacity: .55; }
+.hero__car [pathLength] { stroke-dasharray: 1; animation: car-draw 2s var(--ease) .35s backwards; }
+.hero__car .c-body, .hero__car .c-glass, .hero__car .c-tire, .hero__car .c-mirror { animation: car-draw 2s var(--ease) .35s backwards, car-fill .9s ease 1.7s backwards; }
+.hero__car .c-pillar, .hero__car .c-hub, .hero__car .c-spoke, .hero__car .c-line--strong, .hero__car .c-rim--thin { animation: car-fade .9s ease 1.7s backwards; }
+.hero__car .c-head, .hero__car .c-tail, .hero__car .c-beam, .hero__car .c-shadow { animation: car-fade .7s ease 2.15s backwards; }
+@keyframes car-draw { from { stroke-dashoffset: 1; } }
+@keyframes car-fill { from { fill-opacity: 0; } }
+@keyframes car-fade { from { opacity: 0; } }
 
 /* ---------- Tablica (motyw przewodni) ---------- */
 .plate {
@@ -594,10 +623,12 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
   .site-footer__grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; gap: 28px; }
-  .hero__stage { order: -1; padding-top: 12px; }
+  .hero__grid { grid-template-columns: 1fr; grid-template-areas: "stage" "copy" "car" "ground"; }
+  .hero__stage { padding-top: 12px; }
   .lamps { display: none; }
-  .hero__caption { margin-top: 28px; }
+  .hero__copy { margin-top: 32px; }
+  .hero__title { font-size: clamp(2.6rem, 12.2vw, 4.6rem); }
+  .hero__car { justify-self: stretch; width: 100%; max-width: 560px; margin: 40px auto 0; }
   .plate--hero { --rx: 4deg; --ry: -8deg; }
 }
 @media (max-width: 860px) {
