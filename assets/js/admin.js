@@ -121,16 +121,16 @@
     }
     if (st.source === "local") {
       el.className = "adm-state adm-state--local";
-      el.innerHTML = '<div class="adm-state__text"><h2>Masz niepublikowane zmiany</h2>' +
-        "<p>Ostatnia zmiana: " + esc(when(st.updatedAt)) + ". Na tym urządzeniu strona już je pokazuje. Klienci zobaczą je po publikacji.</p></div>" +
+      el.innerHTML = '<div class="adm-state__text"><h2>Zmiany zapisane na tym urządzeniu</h2>' +
+        "<p>Ostatnia zmiana: " + esc(when(st.updatedAt)) + ". Strona w\u00A0tej przeglądarce już je pokazuje.</p></div>" +
         '<div class="adm-state__actions">' +
           '<button class="btn btn--gold" type="button" data-publish-open>' + icon("i-upload") + "Opublikuj zmiany</button>" +
-          '<button class="btn btn--ghost" type="button" data-discard>Odrzuć zmiany</button>' +
+          '<button class="btn btn--ghost" type="button" data-discard>Cofnij wszystkie zmiany</button>' +
         "</div>";
     } else {
       el.className = "adm-state";
       el.innerHTML = '<div class="adm-state__text"><h2>Oferta zgodna ze stroną</h2>' +
-        "<p>Zmiany zapisują się w tej przeglądarce i od razu widać je na stronie na tym urządzeniu. Gdy skończysz, opublikuj je, żeby zobaczyli je klienci.</p></div>";
+        "<p>Zmiany zapisują się automatycznie i od razu widać je na stronie na tym urządzeniu.</p></div>";
     }
   }
 
@@ -206,13 +206,17 @@
 
   /* ---------- Publikacja ---------- */
   var pubDialog = $("[data-publish]");
+  var soonDialog = $("[data-soon]");
+  // admin.html?dev: pobieranie paczki do publikacji (dla opiekuna strony, komis widzi "wkrótce")
+  var DEV = /[?&]dev(=|&|$)/.test(location.search);
   $("[data-state]").addEventListener("click", function (e) {
-    if (e.target.closest("[data-publish-open]")) pubDialog.showModal();
-    if (e.target.closest("[data-discard]") && window.confirm("Odrzucić wszystkie niepublikowane zmiany i wrócić do oferty ze strony?")) {
+    if (e.target.closest("[data-publish-open]")) (DEV ? pubDialog : soonDialog).showModal();
+    if (e.target.closest("[data-discard]") && window.confirm("Cofnąć wszystkie zmiany i wrócić do oferty, która jest teraz na stronie?")) {
       S.clearLocal().then(load).then(function () { toast("Przywrócono ofertę ze strony"); });
     }
   });
   $("[data-pub-close]").addEventListener("click", function () { pubDialog.close(); });
+  $("[data-soon-close]").addEventListener("click", function () { soonDialog.close(); });
   $("[data-pub-download]").addEventListener("click", function () {
     var btn = this;
     btn.disabled = true;

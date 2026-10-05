@@ -163,3 +163,6 @@
   .adm-editor__msg { flex-basis: 100%; }
   .adm-car__name { font-size: 1.25rem; }
 }
+
+/* okno "Publikacja wkrótce" */
+.adm-soon__tag { display: inline-block; margin: 0 0 12px; padding: .25em .7em; border-radius: 6px; background: rgba(231, 188, 48, .16); color: var(--szyld) !important; font-size: .8125rem; font-weight: 700; }

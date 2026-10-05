@@ -36,7 +36,8 @@ Co można zrobić:
 
 * Zmiany zapisują się w przeglądarce, w której używasz panelu. Na tym urządzeniu strona od razu je pokazuje, a na dole widać informację, że są niepublikowane.
 * Inni odwiedzający widzą opublikowaną ofertę z `assets/js/inventory.js`.
-* Publikacja: w panelu kliknij **Opublikuj zmiany → Pobierz paczkę**. Paczka ZIP zawiera nowy `assets/js/inventory.js` i nowe zdjęcia. Rozpakuj ją do głównego folderu repozytorium (zastąp pliki), zrób commit i push. Po kilku minutach oferta jest widoczna dla wszystkich, a panel sam rozpozna, że zmiany zostały opublikowane.
+* Przycisk **Opublikuj zmiany** pokazuje komisowi komunikat „Publikacja będzie dostępna wkrótce” (bez technicznych szczegółów).
+* Dla opiekuna strony: otwórz panel pod adresem `admin.html?dev`. Wtedy ten sam przycisk pozwala pobrać paczkę ZIP z nowym `assets/js/inventory.js` i zdjęciami. Rozpakuj ją do repozytorium (zastąp pliki), zrób commit i push. Po kilku minutach oferta jest widoczna dla wszystkich, a panel sam rozpozna, że zmiany zostały opublikowane. Paczkę pobiera się na tym urządzeniu, na którym zmiany zostały wprowadzone.
 * Dane lokalne mogą zniknąć po wyczyszczeniu danych przeglądarki, dlatego zmiany warto publikować od razu.
 
 ### PIN

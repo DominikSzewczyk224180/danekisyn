@@ -79,7 +79,7 @@
     <ol class="adm-list" data-list></ol>
     <p class="adm-empty" data-empty hidden>Brak aut w ofercie. Dodaj pierwsze auto przyciskiem „Dodaj auto”.</p>
 
-    <p class="adm-note">Kolejność na liście to kolejność „Polecane” na stronie. Zmiany zapisują się w tej przeglądarce. Mogą zniknąć po wyczyszczeniu danych przeglądarki, dlatego publikuj je regularnie.</p>
+    <p class="adm-note">Kolejność na liście to kolejność „Polecane” na stronie. Zmiany zapisują się automatycznie na tym urządzeniu.</p>
   </main>
 </div>
 
@@ -187,7 +187,20 @@
   </form>
 </dialog>
 
-<!-- ================================================================ PUBLIKACJA -->
+<!-- ================================================================ PUBLIKACJA: WKRÓTCE (widzi komis) -->
+<dialog class="adm-modal" data-soon aria-labelledby="soon-title">
+  <div class="adm-modal__box">
+    <p class="adm-soon__tag">Wkrótce</p>
+    <h2 id="soon-title">Publikacja będzie dostępna wkrótce</h2>
+    <p>Już niedługo jednym kliknięciem pokażesz zmiany wszystkim klientom.</p>
+    <p>Do tego czasu wszystko, co dodasz albo zmienisz, jest zapisane na tym urządzeniu i od razu widać to na stronie w&nbsp;tej przeglądarce.</p>
+    <div class="adm-modal__actions">
+      <button class="btn btn--gold" type="button" data-soon-close>Rozumiem</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ================================================================ PUBLIKACJA: PACZKA ZIP (tylko admin.html?dev, dla opiekuna strony) -->
 <dialog class="adm-modal" data-publish aria-labelledby="pub-title">
   <div class="adm-modal__box">
     <h2 id="pub-title">Opublikuj zmiany</h2>

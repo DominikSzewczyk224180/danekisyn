@@ -730,7 +730,7 @@
     var el = document.createElement("div");
     el.className = "local-notice";
     el.setAttribute("role", "status");
-    el.innerHTML = "<span>Widzisz niepublikowane zmiany z panelu admina. Klienci zobaczą je po publikacji.</span>" +
+    el.innerHTML = "<span>Podgląd zmian z panelu admina, widoczny tylko na tym urządzeniu.</span>" +
       '<a href="admin.html">Panel admina</a>';
     document.body.appendChild(el);
   }
