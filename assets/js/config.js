@@ -52,13 +52,10 @@ window.DANEK_CONFIG = {
     ]
   },
 
-  // Formularz kontaktowy. GitHub Pages nie ma serwera, więc wiadomości wysyła zewnętrzna usługa.
-  //  provider: "web3forms"  -> key = Access Key z web3forms.com (darmowe, wiadomości idą na e-mail komisu)
-  //  provider: "formspree"  -> key = ID formularza z formspree.io (np. "xyzabcd")
-  //  provider: "none"       -> otwiera program pocztowy z gotową wiadomością (tryb awaryjny)
-  form: {
-    provider: "none",
-    key: ""
+  // Panel admina (admin.html). Zmiana PIN-u: otwórz panel, w konsoli przeglądarki wpisz
+  // danekHash("nowyPIN") i wynik wklej poniżej.
+  admin: {
+    pinHash: "4fe43efc"
   },
 
   // Kalkulator raty: wartości startowe symulacji (nie oferta)

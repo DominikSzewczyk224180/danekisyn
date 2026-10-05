@@ -1,18 +1,20 @@
 /* ==========================================================================
    Auto Komis Danek & Syn: logika strony (bez bibliotek)
+   Oferta: assets/js/inventory.js albo niepublikowane zmiany z panelu admina (store.js)
    ========================================================================== */
 (function () {
   "use strict";
 
   var C = window.DANEK_CONFIG;
-  var CARS = (window.DANEK_INVENTORY || []).slice();
   var B = C.business;
+  var CARS = [];
 
   /* ---------- Narzędzia ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var NBSP = "\u00A0";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var touchDevice = window.matchMedia("(pointer: coarse)").matches;
 
   function fmt(n) {
     var v = Math.round(n);
@@ -37,6 +39,11 @@
   function median(arr) {
     var s = arr.slice().sort(function (a, b) { return a - b; });
     return s.length ? s[Math.floor((s.length - 1) / 2)] : 0;
+  }
+  function photos(c) {
+    if (c.imageUrls && c.imageUrls.length) return c.imageUrls;
+    if (c.images && c.images.length) return c.images.filter(function (r) { return !/^idb:/.test(r); });
+    return c.image ? [c.image] : [];
   }
 
   // Polska typografia: jednoliterowe spójniki i przyimki nie zostają na końcu wiersza
@@ -93,7 +100,7 @@
     registeredPL: "Zarejestrowany w PL"
   };
   var CARD_FACT_ORDER = ["accidentFree", "firstOwner", "aso", "registeredPL"];
-  var FUEL_SHORT = { "Hybryda plug-in": "Hybryda" };
+  var FUEL_SHORT = { "Hybryda plug-in": "Hybryda", "Benzyna + LPG": "LPG" };
   var GEAR_SHORT = { "Automatyczna": "Automat", "Manualna": "Manual" };
 
   function factLabel(key, val) {
@@ -101,9 +108,7 @@
     return typeof f === "function" ? f(val) : f;
   }
   function carFlag(c) {
-    if (c.facts && c.facts.warranty) return "Gwarancja " + c.facts.warranty.replace("miesięcy", "mies.");
-    if (c.lowest30) return "Cena obniżona";
-    return "";
+    return c.facts && c.facts.warranty ? "Gwarancja " + String(c.facts.warranty).replace("miesięcy", "mies.") : "";
   }
   function payment(principal, months, ratePct) {
     if (principal <= 0 || months <= 0) return 0;
@@ -111,18 +116,23 @@
     if (r === 0) return principal / months;
     return principal * r / (1 - Math.pow(1 + r, -months));
   }
+  function askText(c) {
+    return "Dzień dobry, pytam o " + carName(c) + (c.version ? " " + c.version : "") + ", rocznik " + c.year + " (" + zl(c.price) + "), ogłoszenie ze strony internetowej.";
+  }
+  function smsHref(text) { return "sms:" + B.phone + "?&body=" + encodeURIComponent(text); }
+  function mailHref(subject, text) { return "mailto:" + B.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text); }
 
   /* ---------- Teksty zależne od danych ---------- */
   function bindTexts() {
     var prices = CARS.map(function (c) { return c.price; });
     var n = CARS.length;
-    var min = Math.min.apply(null, prices), max = Math.max.apply(null, prices);
+    var min = n ? Math.min.apply(null, prices) : 0, max = n ? Math.max.apply(null, prices) : 0;
     var med = median(prices);
 
     $$('[data-bind="count"]').forEach(function (el) { el.textContent = n; });
     $$('[data-bind="inventory-summary"]').forEach(function (el) {
       el.textContent = n
-        ? n + " " + plural(n, "auto", "auta", "aut") + " w cenach od " + fmt(min) + " do " + zl(max) + ". Każde obejrzysz i sprawdzisz na miejscu, przy Raciborskiej 267."
+        ? n + " " + plural(n, "auto", "auta", "aut") + (n > 1 ? " w cenach od " + fmt(min) + " do " + zl(max) : " za " + zl(min)) + ". Każde obejrzysz i sprawdzisz na miejscu, przy Raciborskiej 267."
         : "Oferta właśnie się zmienia. Zadzwoń, powiemy, co jest na placu.";
     });
     $$('[data-bind="pcc-example"]').forEach(function (el) {
@@ -141,13 +151,11 @@
       $$("[data-show-if-rating]").forEach(function (el) { el.hidden = true; });
     }
 
-    // linki z konfiguracji
     $$("[data-link]").forEach(function (el) {
       var url = C.links[el.getAttribute("data-link")];
       if (url) el.href = url;
     });
 
-    // social media
     var social = $("[data-social]");
     if (social) {
       var NETS = [["facebook", "Facebook"], ["instagram", "Instagram"], ["youtube", "YouTube"], ["tiktok", "TikTok"]];
@@ -156,7 +164,6 @@
       }).join("");
     }
 
-    // prawdziwe opinie (jeśli wklejone w konfiguracji)
     var quotesEl = $("[data-quotes]");
     if (quotesEl && R.quotes && R.quotes.length) {
       quotesEl.innerHTML = R.quotes.map(function (q) {
@@ -185,7 +192,6 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
     window.matchMedia("(min-width: 981px)").addEventListener("change", function (e) { if (e.matches) setMenu(false); });
 
-    // podświetlenie sekcji w menu
     if ("IntersectionObserver" in window) {
       var links = $$(".nav a[href^='#']");
       var map = {};
@@ -202,7 +208,7 @@
     }
   }
 
-  /* ---------- Otwarte teraz (czas Polski, niezależnie od strefy odwiedzającego) ---------- */
+  /* ---------- Otwarte teraz (czas Polski) ---------- */
   var DAYS_ACC = ["w poniedziałek", "we wtorek", "w środę", "w czwartek", "w piątek", "w sobotę", "w niedzielę"];
   function warsawNow() {
     var parts = new Intl.DateTimeFormat("en-GB", {
@@ -263,7 +269,7 @@
     }));
     fillSelect($("#f-fuel"), uniq(CARS.map(function (c) { return c.fuel; })).map(function (f) { return [f, f]; }));
     fillSelect($("#f-gear"), uniq(CARS.map(function (c) { return c.gearbox; })).map(function (g) { return [g, g]; }));
-    var minPrice = Math.min.apply(null, CARS.map(function (c) { return c.price; }));
+    var minPrice = CARS.length ? Math.min.apply(null, CARS.map(function (c) { return c.price; })) : 0;
     fillSelect($("#f-max"), [30000, 40000, 50000, 70000, 100000, 150000]
       .filter(function (p) { return p > minPrice; })
       .map(function (p) { return [String(p), "do " + zl(p)]; }));
@@ -274,7 +280,7 @@
       if (!t.name || t.tagName !== "INPUT") return;
       state[t.name] = t.value.trim();
       clearTimeout(debounce);
-      debounce = setTimeout(renderCars, t.type === "search" ? 140 : 0);
+      debounce = setTimeout(renderCars, 140);
     });
     filtersForm.addEventListener("change", function (e) {
       if (e.target.name) { state[e.target.name] = e.target.value.trim(); renderCars(); }
@@ -312,26 +318,26 @@
 
   function cardHTML(c) {
     var flag = carFlag(c);
-    var lastSpec = c.gearbox ? ["Skrzynia", GEAR_SHORT[c.gearbox] || c.gearbox] : ["Nadwozie", c.body];
+    var img = photos(c)[0];
+    var lastSpec = c.gearbox ? ["Skrzynia", GEAR_SHORT[c.gearbox] || c.gearbox] : ["Nadwozie", c.body || "b.d."];
     var specs = [["Rok", c.year], ["Przebieg", km(c.mileage)], ["Paliwo", FUEL_SHORT[c.fuel] || c.fuel], lastSpec];
     var facts = CARD_FACT_ORDER.filter(function (k) { return c.facts && c.facts[k]; }).slice(0, 2);
-    var showOmnibus = c.lowest30 && flag === "Cena obniżona";
     return '<article class="car">' +
       '<div class="car__media">' +
-        '<img src="' + esc(c.image) + '" alt="' + esc(c.imageAlt || carName(c)) + '" width="600" height="450" loading="lazy" decoding="async"' +
-        (c.imagePos ? ' style="object-position:' + esc(c.imagePos) + '"' : "") + ">" +
+        (img
+          ? '<img src="' + esc(img) + '" alt="' + esc(c.imageAlt || carName(c) + (c.color ? ", " + c.color.toLowerCase() : "")) + '" width="600" height="450" loading="lazy" decoding="async"' +
+            (c.imagePos ? ' style="object-position:' + esc(c.imagePos) + '"' : "") + ">"
+          : '<div class="car__noimg">Zdjęcia wkrótce</div>') +
         (flag ? '<span class="car__flag">' + esc(flag) + "</span>" : "") +
+        (photos(c).length > 1 ? '<span class="car__count">' + icon("i-image") + photos(c).length + "</span>" : "") +
       "</div>" +
       '<div class="car__body">' +
         '<h3 class="car__title"><button class="car__open" type="button" data-open-car="' + esc(c.id) + '" aria-haspopup="dialog">' + esc(carName(c)) + "</button></h3>" +
-        '<p class="car__version">' + esc(c.version) + "</p>" +
+        '<p class="car__version">' + esc(c.version || "\u00A0") + "</p>" +
         '<dl class="car__specs">' + specs.map(function (s) { return "<div><dt>" + s[0] + "</dt><dd>" + esc(s[1]) + "</dd></div>"; }).join("") + "</dl>" +
         (facts.length ? '<ul class="car__facts">' + facts.map(function (k) { return "<li>" + icon("i-check") + esc(FACT_SHORT[k]) + "</li>"; }).join("") + "</ul>" : "") +
         '<div class="car__foot">' +
-          "<div>" +
-            '<p class="plate plate--price">' + fmt(c.price) + "<small>zł</small></p>" +
-            (showOmnibus ? '<p class="car__price-note">Najniższa cena z 30 dni przed obniżką: ' + zl(c.lowest30) + "</p>" : "") +
-          "</div>" +
+          '<p class="plate plate--price">' + fmt(c.price) + "<small>zł</small></p>" +
           '<span class="car__more" aria-hidden="true">Szczegóły</span>' +
         "</div>" +
       "</div>" +
@@ -350,13 +356,16 @@
     $(".filters__meta [data-reset-filters]").hidden = !filtered && state.sort === "default";
   }
 
-  /* ---------- Szczegóły auta ---------- */
+  /* ---------- Szczegóły auta z galerią ---------- */
   var dlg = $("#car-dialog");
   var baseTitle = document.title;
   var lastFocus = null;
   var currentCar = null;
+  var galIndex = 0;
 
   function dialogHTML(c) {
+    var imgs = photos(c);
+    var multi = imgs.length > 1;
     var specs = [
       ["Rok produkcji", c.year],
       ["Przebieg", km(c.mileage)],
@@ -375,14 +384,27 @@
     var priceMeta = [];
     if (c.negotiable) priceMeta.push("Cena do negocjacji");
     priceMeta.push("Faktura VAT-marża");
+    var ask = touchDevice
+      ? '<a class="btn btn--ghost" href="' + esc(smsHref(askText(c))) + '">' + icon("i-message") + "Wyślij SMS</a>"
+      : '<a class="btn btn--ghost" href="' + esc(mailHref(carName(c) + " " + c.year + ": pytanie ze strony", askText(c))) + '">' + icon("i-mail") + "Napisz e-mail</a>";
 
     return '<div class="dlg">' +
       '<div class="dlg__media">' +
-        '<figure class="dlg__photo"><img src="' + esc(c.image) + '" alt="' + esc(c.imageAlt || carName(c)) + '" width="600" height="450"' +
-          (c.imagePos ? ' style="object-position:' + esc(c.imagePos) + '"' : "") + "></figure>" +
-        '<a class="dlg__gallery" href="' + esc(c.otomoto) + '" target="_blank" rel="noopener">' +
-          "<span>" + (c.photos ? "Zobacz wszystkie " + c.photos + " " + plural(c.photos, "zdjęcie", "zdjęcia", "zdjęć") + " na Otomoto" : "Zobacz ogłoszenie na Otomoto") + "</span>" + icon("i-external") +
-        "</a>" +
+        '<figure class="dlg__photo">' +
+          (imgs[0]
+            ? '<img src="' + esc(imgs[0]) + '" alt="' + esc(c.imageAlt || carName(c)) + '" width="1600" height="1200"' + (c.imagePos ? ' style="object-position:' + esc(c.imagePos) + '"' : "") + ">"
+            : '<div class="car__noimg">Zdjęcia wkrótce</div>') +
+          (multi
+            ? '<button class="gal__nav gal__nav--prev" type="button" data-gal="-1" aria-label="Poprzednie zdjęcie">' + icon("i-chev-l") + "</button>" +
+              '<button class="gal__nav gal__nav--next" type="button" data-gal="1" aria-label="Następne zdjęcie">' + icon("i-chev-r") + "</button>" +
+              '<span class="gal__count" aria-live="polite">1 / ' + imgs.length + "</span>"
+            : "") +
+        "</figure>" +
+        (multi
+          ? '<div class="gal__thumbs">' + imgs.map(function (u, i) {
+              return '<button class="gal__thumb' + (i === 0 ? " is-active" : "") + '" type="button" data-gal-to="' + i + '" aria-label="Zdjęcie ' + (i + 1) + " z " + imgs.length + '"><img src="' + esc(u) + '" alt="" loading="lazy"></button>';
+            }).join("") + "</div>"
+          : "") +
         '<div class="dlg__where">' +
           "<h3>Gdzie obejrzeć</h3>" +
           "<p>" + esc(B.street) + ", " + esc(B.zip) + " " + esc(B.city) + '. <a href="' + esc(C.links.directions) + '" target="_blank" rel="noopener">Wyznacz trasę</a></p>' +
@@ -396,19 +418,19 @@
           '<button class="dlg__close" type="button" data-close aria-label="Zamknij szczegóły">' + icon("i-close") + "</button>" +
         "</div>" +
         '<h2 class="dlg__title" id="dlg-title">' + esc(carName(c)) + "</h2>" +
-        '<p class="dlg__version">' + esc(c.version) + ", " + c.year + "</p>" +
+        '<p class="dlg__version">' + esc(c.version ? c.version + ", " + c.year : String(c.year)) + "</p>" +
         '<div class="dlg__price">' +
           '<p class="plate plate--price">' + fmt(c.price) + "<small>zł</small></p>" +
           '<p class="dlg__price-meta">' + priceMeta.join("<br>") + "</p>" +
         "</div>" +
-        (c.lowest30 ? '<p class="dlg__omnibus">Cena obniżona o ' + zl(c.lowest30 - c.price) + ". Najniższa cena z 30 dni przed obniżką: " + zl(c.lowest30) + ".</p>" : "") +
         (facts.length ? '<ul class="dlg__facts">' + facts.map(function (k) { return "<li>" + icon("i-check") + esc(factLabel(k, c.facts[k])) + "</li>"; }).join("") + "</ul>" : "") +
         '<div class="dlg__cta">' +
           '<a class="btn btn--gold" href="tel:' + esc(B.phone) + '">' + icon("i-phone") + "Zadzwoń</a>" +
-          '<button class="btn btn--ghost" type="button" data-ask-car="' + esc(c.id) + '">' + icon("i-message") + "Zapytaj o auto</button>" +
+          ask +
         "</div>" +
         '<p class="dlg__fin">Przykładowa rata: ok. ' + zl(est) + " miesięcznie przy " + C.financing.months + " ratach, bez wkładu własnego (symulacja). " +
           '<button class="link-btn" type="button" data-calc-car="' + esc(c.id) + '">Policz swój wariant</button></p>' +
+        (c.description ? '<h3 class="dlg__h">Opis</h3><div class="dlg__desc">' + esc(c.description).split(/\n{2,}/).map(function (p) { return "<p>" + p.replace(/\n/g, "<br>") + "</p>"; }).join("") + "</div>" : "") +
         '<h3 class="dlg__h">Dane techniczne</h3>' +
         '<dl class="spec">' + specs.map(function (s) { return "<div><dt>" + s[0] + "</dt><dd>" + esc(s[1]) + "</dd></div>"; }).join("") + "</dl>" +
         (c.highlights && c.highlights.length
@@ -416,11 +438,32 @@
           : "") +
         '<div class="dlg__tools">' +
           '<button class="btn btn--ghost btn--compact" type="button" data-share="' + esc(c.id) + '">' + icon("i-share") + "Wyślij komuś</button>" +
-          '<a class="btn btn--ghost btn--compact" href="' + esc(c.otomoto) + '" target="_blank" rel="noopener">' + icon("i-external") + "Ogłoszenie na Otomoto</a>" +
+          (c.otomoto ? '<a class="btn btn--ghost btn--compact" href="' + esc(c.otomoto) + '" target="_blank" rel="noopener">' + icon("i-external") + "Ogłoszenie na Otomoto</a>" : "") +
         "</div>" +
-        '<p class="dlg__legal">Dane pochodzą z ogłoszenia komisu. Informacja handlowa, nie oferta w rozumieniu art.' + NBSP + "66" + NBSP + "§" + NBSP + "1 Kodeksu cywilnego.</p>" +
+        '<p class="dlg__legal">Informacja handlowa, nie oferta w rozumieniu art.' + NBSP + "66" + NBSP + "§" + NBSP + "1 Kodeksu cywilnego.</p>" +
       "</div>" +
     "</div>";
+  }
+
+  function showPhoto(i) {
+    var imgs = currentCar ? photos(currentCar) : [];
+    if (imgs.length < 2) return;
+    galIndex = (i + imgs.length) % imgs.length;
+    var img = $(".dlg__photo img", dlg);
+    img.src = imgs[galIndex];
+    img.style.objectPosition = galIndex === 0 && currentCar.imagePos ? currentCar.imagePos : "";
+    var cnt = $(".gal__count", dlg);
+    if (cnt) cnt.textContent = (galIndex + 1) + " / " + imgs.length;
+    $$(".gal__thumb", dlg).forEach(function (t, k) {
+      t.classList.toggle("is-active", k === galIndex);
+      if (k === galIndex) {
+        var strip = t.parentElement;
+        var left = t.offsetLeft - (strip.clientWidth - t.clientWidth) / 2;
+        strip.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? "auto" : "smooth" });
+      }
+    });
+    var next = new Image();
+    next.src = imgs[(galIndex + 1) % imgs.length];
   }
 
   function openCar(id, push) {
@@ -428,6 +471,8 @@
     if (!c) return;
     if (!dlg.open) lastFocus = document.activeElement;
     currentCar = c;
+    galIndex = 0;
+    dlg.classList.remove("is-scrolled");
     dlg.innerHTML = dialogHTML(c);
     fixOrphans(dlg);
     updateStatus();
@@ -436,7 +481,8 @@
     }
     document.documentElement.classList.add("is-locked");
     dlg.scrollTop = 0;
-    var main = $(".dlg__main", dlg); if (main) main.scrollTop = 0;
+    var main = $(".dlg__main", dlg);
+    if (main) main.scrollTop = 0;
     var photo = $(".dlg__photo", dlg);
     var onScroll = function () {
       var mobile = window.matchMedia("(max-width: 860px)").matches;
@@ -447,7 +493,8 @@
     main.addEventListener("scroll", onScroll, { passive: true });
     dlg.onscroll = onScroll;
     onScroll();
-    var closeBtn = $("[data-close]", dlg); if (closeBtn) closeBtn.focus();
+    var closeBtn = $("[data-close]", dlg);
+    if (closeBtn) closeBtn.focus();
     document.title = carName(c) + " " + c.year + " | " + B.name;
     var hash = "#auto-" + c.id;
     if (push !== false && location.hash !== hash) history.pushState({ car: c.id }, "", hash);
@@ -473,7 +520,6 @@
       if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
     });
 
-    // klik w tło zamyka okno
     dlg.addEventListener("click", function (e) {
       if (e.target === dlg) {
         var r = dlg.getBoundingClientRect();
@@ -481,21 +527,32 @@
         if (!inside) closeDialog();
       }
       if (e.target.closest("[data-close]")) closeDialog();
-
-      var ask = e.target.closest("[data-ask-car]");
-      if (ask) {
-        var id = ask.getAttribute("data-ask-car");
-        closeDialog();
-        setTimeout(function () { prefillForm("auto", id); }, 80);
-      }
+      var nav = e.target.closest("[data-gal]");
+      if (nav) showPhoto(galIndex + +nav.getAttribute("data-gal"));
+      var to = e.target.closest("[data-gal-to]");
+      if (to) showPhoto(+to.getAttribute("data-gal-to"));
       var calcBtn = e.target.closest("[data-calc-car]");
       if (calcBtn) {
         var cid = calcBtn.getAttribute("data-calc-car");
         closeDialog();
         setTimeout(function () { selectCalcCar(cid); scrollToEl($("#finansowanie")); }, 80);
       }
-      var share = e.target.closest("[data-share]");
-      if (share) shareCar(currentCar);
+      if (e.target.closest("[data-share]")) shareCar(currentCar);
+    });
+
+    dlg.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") showPhoto(galIndex + 1);
+      if (e.key === "ArrowLeft") showPhoto(galIndex - 1);
+    });
+
+    // przesuwanie zdjęć palcem
+    var startX = null;
+    dlg.addEventListener("pointerdown", function (e) { startX = e.target.closest(".dlg__photo") ? e.clientX : null; });
+    dlg.addEventListener("pointerup", function (e) {
+      if (startX === null) return;
+      var dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 40) showPhoto(galIndex + (dx < 0 ? 1 : -1));
     });
 
     window.addEventListener("popstate", function () {
@@ -511,7 +568,7 @@
   function shareCar(c) {
     if (!c) return;
     var url = location.href.split("#")[0] + "#auto-" + c.id;
-    var data = { title: carName(c) + " | " + B.name, text: carName(c) + " " + c.version + ", " + c.year + ", " + zl(c.price), url: url };
+    var data = { title: carName(c) + " | " + B.name, text: carName(c) + (c.version ? " " + c.version : "") + ", " + c.year + ", " + zl(c.price), url: url };
     if (navigator.share) {
       navigator.share(data).catch(function () {});
       return;
@@ -577,10 +634,9 @@
     calc.months.min = F.minMonths; calc.months.max = F.maxMonths; calc.months.value = F.months;
     calc.rate.value = decimal(F.rate);
 
-    // na start auto o środkowej cenie z oferty
     var mid = median(CARS.map(function (c) { return c.price; }));
     var start = CARS.find(function (c) { return c.price === mid; }) || CARS[0];
-    if (start) selectCalcCar(start.id); else updateCalc();
+    if (start) selectCalcCar(start.id); else { sel.value = ""; calc.price.value = fmt(40000); updateCalc(); }
 
     sel.addEventListener("change", function () {
       if (sel.value) selectCalcCar(sel.value); else { calc.price.focus(); updateCalc(); }
@@ -593,158 +649,6 @@
     calc.price.addEventListener("blur", function () { calc.price.value = parsePrice() ? fmt(parsePrice()) : ""; });
     calc.rate.addEventListener("blur", function () { calc.rate.value = decimal(parseRate()); updateCalc(); });
     calc.addEventListener("input", function (e) { if (e.target !== calc.price) updateCalc(); });
-
-    $("[data-ask-financing]").addEventListener("click", function () {
-      var v = calcValues();
-      var c = CARS.find(function (x) { return x.id === sel.value; });
-      var msg = "Dzień dobry, proszę o informację o finansowaniu" + (c ? " auta " + carName(c) + " " + c.version + " (" + zl(c.price) + ")" : " auta za " + zl(v.price)) +
-        ". Wkład własny: " + zl(v.down) + ", liczba rat: " + v.months + ".";
-      prefillForm("finansowanie", c ? c.id : "", msg);
-    });
-  }
-
-  /* ---------- Formularz kontaktowy ---------- */
-  var form = $("[data-contact-form]");
-  var TOPICS = {};
-
-  function syncTopic() {
-    var t = form.topic.value;
-    $("[data-field-car]", form).hidden = ["auto", "jazda", "finansowanie"].indexOf(t) === -1;
-    var trade = $("[data-field-trade]", form);
-    trade.hidden = t !== "zamiana";
-    $$("input", trade).forEach(function (i) { i.disabled = t !== "zamiana"; });
-  }
-
-  function prefillForm(topic, carId, message) {
-    form.topic.value = topic;
-    if (carId !== undefined) form.car.value = carId || "";
-    if (message) form.message.value = message;
-    else if (topic === "auto" && carId) {
-      var c = CARS.find(function (x) { return x.id === carId; });
-      if (c && !form.message.value) form.message.value = "Dzień dobry, interesuje mnie " + carName(c) + " " + c.version + " (" + c.year + "). Proszę o kontakt.";
-    }
-    syncTopic();
-    scrollToEl(form);
-    setTimeout(function () { form.imie.focus({ preventScroll: true }); }, reduceMotion ? 0 : 450);
-  }
-
-  function setError(input, on) {
-    input.setAttribute("aria-invalid", on ? "true" : "false");
-    var err = document.getElementById(input.id + "-err");
-    if (err) err.hidden = !on;
-  }
-  function validate() {
-    var ok = true, first = null;
-    var nameOk = form.imie.value.trim().length >= 2;
-    setError(form.imie, !nameOk); if (!nameOk) { ok = false; first = first || form.imie; }
-    var digits = form.phone.value.replace(/\D/g, "");
-    var phoneOk = digits.length >= 9 && digits.length <= 13;
-    setError(form.phone, !phoneOk); if (!phoneOk) { ok = false; first = first || form.phone; }
-    var email = form.email.value.trim();
-    var emailOk = !email || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-    setError(form.email, !emailOk); if (!emailOk) { ok = false; first = first || form.email; }
-    if (first) first.focus();
-    return ok;
-  }
-
-  function collect() {
-    var topicLabel = form.topic.options[form.topic.selectedIndex].textContent;
-    var c = CARS.find(function (x) { return x.id === form.car.value; });
-    var showCar = !$("[data-field-car]", form).hidden && c;
-    var trade = form.topic.value === "zamiana";
-    var lines = [
-      "Imię: " + form.imie.value.trim(),
-      "Telefon: " + form.phone.value.trim(),
-      form.email.value.trim() ? "E-mail: " + form.email.value.trim() : "",
-      "Sprawa: " + topicLabel,
-      showCar ? "Auto z oferty: " + carName(c) + " " + c.version + ", " + c.year + ", " + zl(c.price) : "",
-      trade ? "Auto klienta: " + (form.tradeModel.value || "nie podano") + ", rocznik " + (form.tradeYear.value || "?") + ", przebieg " + (form.tradeKm.value ? km(+form.tradeKm.value) : "?") : "",
-      form.message.value.trim() ? "\nWiadomość:\n" + form.message.value.trim() : ""
-    ].filter(Boolean);
-    return {
-      subject: "Strona www: " + topicLabel + (showCar ? ", " + carName(c) : ""),
-      body: lines.join("\n"),
-      fields: {
-        imie: form.imie.value.trim(),
-        telefon: form.phone.value.trim(),
-        email: form.email.value.trim(),
-        sprawa: topicLabel,
-        auto: showCar ? carName(c) + " " + c.version + " " + c.year : "",
-        auto_klienta: trade ? [form.tradeModel.value, form.tradeYear.value, form.tradeKm.value && form.tradeKm.value + " km"].filter(Boolean).join(", ") : "",
-        wiadomosc: form.message.value.trim()
-      }
-    };
-  }
-
-  function showStatus(text, tone) {
-    var el = $("[data-form-status]", form);
-    el.textContent = text;
-    el.setAttribute("data-tone", tone || "ok");
-    el.hidden = false;
-  }
-
-  function initForm() {
-    if (!form) return;
-    CARS.forEach(function (c) {
-      var o = document.createElement("option");
-      o.value = c.id; o.textContent = carName(c) + ", " + c.year + ", " + zl(c.price);
-      form.car.appendChild(o);
-    });
-    form.topic.addEventListener("change", syncTopic);
-    syncTopic();
-
-    $$('[data-topic]').forEach(function (a) {
-      a.addEventListener("click", function (e) {
-        e.preventDefault();
-        prefillForm(a.getAttribute("data-topic"));
-      });
-    });
-
-    ["imie", "phone", "email"].forEach(function (n) {
-      form[n].addEventListener("input", function () { if (form[n].getAttribute("aria-invalid") === "true") setError(form[n], false); });
-    });
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (form.company.value) { showStatus("Wiadomość wysłana. Oddzwonimy w godzinach otwarcia komisu."); form.reset(); return; }
-      if (!validate()) return;
-
-      var data = collect();
-      var P = C.form || {};
-      var btn = $(".form__submit", form);
-
-      if (P.provider === "web3forms" || P.provider === "formspree") {
-        if (!P.key) { mailtoFallback(data); return; }
-        btn.disabled = true;
-        var label = btn.textContent;
-        btn.textContent = "Wysyłanie…";
-        var url = P.provider === "web3forms" ? "https://api.web3forms.com/submit" : "https://formspree.io/f/" + encodeURIComponent(P.key);
-        var payload = Object.assign({}, data.fields, { tresc: data.body });
-        if (P.provider === "web3forms") { payload.access_key = P.key; payload.subject = data.subject; payload.from_name = B.name + " (strona www)"; }
-        else { payload._subject = data.subject; }
-        if (data.fields.email) payload.replyto = data.fields.email;
-
-        fetch(url, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(payload) })
-          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.success !== false; }); })
-          .then(function (ok) {
-            if (!ok) throw new Error("send");
-            showStatus("Wiadomość wysłana. Oddzwonimy w godzinach otwarcia komisu.");
-            form.reset(); syncTopic();
-          })
-          .catch(function () {
-            showStatus("Nie udało się wysłać wiadomości. Zadzwoń: " + B.phoneDisplay + " albo spróbuj ponownie za chwilę.", "error");
-          })
-          .finally(function () { btn.disabled = false; btn.textContent = label; });
-        return;
-      }
-      mailtoFallback(data);
-    });
-  }
-
-  function mailtoFallback(data) {
-    var href = "mailto:" + B.email + "?subject=" + encodeURIComponent(data.subject) + "&body=" + encodeURIComponent(data.body);
-    window.location.href = href;
-    showStatus("Otwieramy Twój program pocztowy z gotową wiadomością. Jeśli nic się nie stało, napisz na " + B.email + " albo zadzwoń: " + B.phoneDisplay + ".", "info");
   }
 
   /* ---------- Mapa ładowana na żądanie ---------- */
@@ -788,12 +692,13 @@
     var base = location.href.split("#")[0];
     var abs = function (p) { try { return new URL(p, base).href; } catch (e) { return p; } };
     var items = CARS.map(function (c, i) {
+      var imgs = (c.images || []).filter(function (r) { return !/^idb:/.test(r); });
       return {
         "@type": "ListItem",
         position: i + 1,
         item: {
           "@type": "Car",
-          name: carName(c) + " " + c.version,
+          name: carName(c) + (c.version ? " " + c.version : ""),
           brand: { "@type": "Brand", name: c.make },
           model: c.model,
           vehicleModelDate: String(c.year),
@@ -801,7 +706,7 @@
           fuelType: c.fuel,
           vehicleTransmission: c.gearbox || undefined,
           color: c.color || undefined,
-          image: abs(c.image),
+          image: imgs.length ? imgs.map(abs) : undefined,
           url: base + "#auto-" + c.id,
           offers: {
             "@type": "Offer",
@@ -820,18 +725,40 @@
     document.head.appendChild(s);
   }
 
+  /* ---------- Informacja o niepublikowanych zmianach (widzi ją tylko to urządzenie) ---------- */
+  function localNotice() {
+    var el = document.createElement("div");
+    el.className = "local-notice";
+    el.setAttribute("role", "status");
+    el.innerHTML = "<span>Widzisz niepublikowane zmiany z panelu admina. Klienci zobaczą je po publikacji.</span>" +
+      '<a href="admin.html">Panel admina</a>';
+    document.body.appendChild(el);
+  }
+
   /* ---------- Start ---------- */
-  bindTexts();
   initHeader();
   updateStatus();
   setInterval(updateStatus, 60000);
-  initFilters();
-  renderCars();
-  initDialog();
-  initCalc();
-  initForm();
   initMap();
   initPlate();
-  injectSchema();
-  fixOrphans(document.body);
+
+  var fallback = function () { return { cars: (window.DANEK_INVENTORY || []).slice(), source: "published" }; };
+  var loading = window.DanekStore
+    ? window.DanekStore.load().then(function (r) {
+        return window.DanekStore.resolveCars(r.cars).then(function (cars) { return { cars: cars, source: r.source }; });
+      })
+    : Promise.resolve(fallback());
+
+  loading.catch(fallback).then(function (r) {
+    CARS = (r.cars || []).filter(function (c) { return !c.hidden; });
+    bindTexts();
+    initFilters();
+    renderCars();
+    initDialog();
+    initCalc();
+    injectSchema();
+    if (r.source === "local") localNotice();
+    fixOrphans(document.body);
+    document.documentElement.classList.add("is-ready");
+  });
 })();

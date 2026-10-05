@@ -1,21 +1,14 @@
 /* ==========================================================================
-   OFERTA AUT
-   Dane przepisane z ogłoszeń komisu na Otomoto (stan na 4.10.2026).
-   Kolejność w tablicy = kolejność "Kolejność komisu" na stronie.
+   OFERTA AUT (opublikowana, widzą ją wszyscy odwiedzający)
+   Najwygodniej zmieniać ją w panelu admina (admin.html), który tworzy ten plik.
+   Kolejność aut w tablicy = kolejność "Polecane" na stronie.
 
-   Pola:
-     id          unikalny identyfikator, trafia do linku (#auto-ID)
-     price       cena w zł
-     lowest30    najniższa cena z 30 dni przed obniżką (wymóg dyrektywy Omnibus).
-                 Wpisz tylko, gdy cena została obniżona. Wtedy auto dostaje oznaczenie "Cena obniżona".
-     negotiable  true = "Cena do negocjacji"
-     facts       atuty auta (pokazywane jako odznaki), tylko te potwierdzone w ogłoszeniu
-     highlights  wybrane wyposażenie (6 do 8 pozycji)
-     image       zdjęcie 4:3, najlepiej 1600 x 1200 px w formacie WebP
-     imagePos    opcjonalnie: kadrowanie zdjęcia (CSS object-position)
-     photos      liczba zdjęć w ogłoszeniu na Otomoto
-     otomoto     link do ogłoszenia
+   Najważniejsze pola: id (link #auto-ID), make, model, version, year, mileage, fuel, price,
+   images (lista zdjęć, pierwsze jest główne), facts (atuty), highlights (wyposażenie),
+   description (opis), otomoto (link), hidden: true (auto ukryte na stronie).
    ========================================================================== */
+
+window.DANEK_INVENTORY_VERSION = 0;
 
 window.DANEK_INVENTORY = [
   {
@@ -47,9 +40,8 @@ window.DANEK_INVENTORY = [
       "Podgrzewane fotele",
       "Keyless Go"
     ],
-    image: "assets/img/cars/audi-q3.webp",
+    images: ["assets/img/cars/audi-q3.webp"],
     imageAlt: "Białe Audi Q3 na placu komisu Danek & Syn",
-    photos: 40,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/audi-q3-ID6Igw3p.html"
   },
   {
@@ -69,7 +61,6 @@ window.DANEK_INVENTORY = [
     color: "Czarny",
     origin: "Dania",
     price: 21900,
-    lowest30: 23900, // TODO: potwierdź z komisem (na Otomoto obniżka o 2 000 zł)
     negotiable: false,
     facts: { warranty: "12 miesięcy", accidentFree: true, firstOwner: true, aso: true },
     highlights: [
@@ -82,10 +73,9 @@ window.DANEK_INVENTORY = [
       "Reflektory bi-ksenonowe",
       "Keyless Go"
     ],
-    image: "assets/img/cars/honda-civic.webp",
+    images: ["assets/img/cars/honda-civic.webp"],
     imagePos: "50% 64%",
     imageAlt: "Czarna Honda Civic",
-    photos: 11,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/honda-civic-ID6Ifa1f.html"
   },
   {
@@ -117,9 +107,8 @@ window.DANEK_INVENTORY = [
       "Tempomat",
       "Felgi aluminiowe 18 cali"
     ],
-    image: "assets/img/cars/opel-mokka.webp",
+    images: ["assets/img/cars/opel-mokka.webp"],
     imageAlt: "Brązowy Opel Mokka na placu komisu Danek & Syn",
-    photos: 40,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/opel-mokka-ID6If8U0.html"
   },
   {
@@ -139,7 +128,6 @@ window.DANEK_INVENTORY = [
     color: "Szary metalik",
     origin: "Dania",
     price: 39900,
-    lowest30: 42900, // TODO: potwierdź z komisem (na Otomoto obniżka o 3 000 zł)
     negotiable: true,
     facts: { firstOwner: true, accidentFree: true, aso: true, noSmoking: true },
     highlights: [
@@ -152,9 +140,8 @@ window.DANEK_INVENTORY = [
       "Łopatki zmiany biegów",
       "Felgi aluminiowe 18 cali"
     ],
-    image: "assets/img/cars/seat-leon.webp",
+    images: ["assets/img/cars/seat-leon.webp"],
     imageAlt: "Szary Seat Leon kombi na placu komisu Danek & Syn",
-    photos: 34,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/seat-leon-ID6Ie9o2.html"
   },
   {
@@ -186,9 +173,8 @@ window.DANEK_INVENTORY = [
       "Keyless Go",
       "Świeżo po serwisie"
     ],
-    image: "assets/img/cars/nissan-qashqai.webp",
+    images: ["assets/img/cars/nissan-qashqai.webp"],
     imageAlt: "Szary Nissan Qashqai na placu komisu Danek & Syn",
-    photos: 37,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/nissan-qashqai-ID6Ie3hK.html"
   },
   {
@@ -207,7 +193,6 @@ window.DANEK_INVENTORY = [
     color: "Srebrny metalik",
     origin: "Niemcy",
     price: 97900,
-    lowest30: 99900, // TODO: potwierdź z komisem (na Otomoto obniżka o 2 000 zł)
     negotiable: true,
     facts: { firstOwner: true, aso: true, noSmoking: true, twoKeys: true },
     highlights: [
@@ -220,9 +205,8 @@ window.DANEK_INVENTORY = [
       "Klapa otwierana ruchem stopy",
       "Apple CarPlay i Android Auto"
     ],
-    image: "assets/img/cars/ford-kuga.webp",
+    images: ["assets/img/cars/ford-kuga.webp"],
     imageAlt: "Srebrny Ford Kuga ST-Line na placu komisu Danek & Syn",
-    photos: 40,
     otomoto: "https://www.otomoto.pl/osobowe/oferta/ford-kuga-ID6IanwW.html"
   },
   {
@@ -243,9 +227,8 @@ window.DANEK_INVENTORY = [
     negotiable: false,
     facts: {},
     highlights: [],
-    image: "assets/img/cars/ford-fiesta.webp",
+    images: ["assets/img/cars/ford-fiesta.webp"],
     imageAlt: "Niebieski Ford Fiesta ST-Line na placu komisu Danek & Syn",
-    photos: null,
     otomoto: "https://danek.otomoto.pl/inventory"
   }
 ];

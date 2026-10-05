@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Panel admina | Auto Komis Danek &amp; Syn</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#1D2024">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="adm-body">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 20h4L19.2 8.8a2.8 2.8 0 0 0-4-4L4 16z"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="m13.6 6.4 4 4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chev-l" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15 6-6 6 6 6"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3.5 3.5l17 17M10.4 5.6A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16.6 16.6 0 0 1-3 3.8M6.7 6.9C4 8.6 2.5 12 2.5 12S6 18.5 12 18.5c1.7 0 3.2-.5 4.5-1.2M10 10a3 3 0 0 0 4.1 4.1"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.5a2 2 0 0 0 2 2h2.5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 16V4.5M7.5 9 12 4.5 16.5 9M4.5 15.5v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5V16M7.5 11.5 12 16l4.5-4.5M4.5 15.5v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="1.6" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m21 15.5-5-5L6.5 19"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m5 12.6 4.4 4.4L19 7.4"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4H19a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4.5M10 16.5 5.5 12 10 7.5M5.5 12h10"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================================================================ LOGOWANIE -->
+<main class="adm-login" data-login>
+  <form class="adm-login__box" data-login-form novalidate>
+    <img class="adm-login__logo" src="assets/img/logo.svg" alt="Auto Komis Danek &amp; Syn" width="954" height="362">
+    <h1>Panel admina</h1>
+    <p>Wpisz PIN, żeby zarządzać ofertą aut.</p>
+    <div class="field">
+      <label for="adm-pin">PIN</label>
+      <input class="input" id="adm-pin" type="password" inputmode="numeric" autocomplete="current-password" required>
+    </div>
+    <p class="adm-login__err" data-login-err role="alert" hidden>Nieprawidłowy PIN. Spróbuj ponownie.</p>
+    <button class="btn btn--gold btn--lg" type="submit">Zaloguj</button>
+    <a class="adm-login__back" href="index.html">Wróć na stronę</a>
+  </form>
+</main>
+
+<!-- ================================================================ PANEL -->
+<div class="adm" data-app hidden>
+  <header class="adm-head">
+    <div class="wrap adm-head__bar">
+      <a class="brand" href="index.html" aria-label="Strona główna"><img src="assets/img/logo.svg" alt="Auto Komis Danek &amp; Syn" width="954" height="362"></a>
+      <span class="adm-head__label">Panel admina</span>
+      <div class="adm-head__actions">
+        <a class="btn btn--ghost btn--compact" href="index.html#oferta" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-external"/></svg><span>Zobacz stronę</span></a>
+        <button class="btn btn--ghost btn--compact" type="button" data-logout><svg aria-hidden="true"><use href="#i-logout"/></svg><span>Wyloguj</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap adm-main">
+    <section class="adm-state" data-state aria-live="polite"></section>
+
+    <div class="adm-toolbar">
+      <div>
+        <h1 class="adm-title">Oferta aut</h1>
+        <p class="adm-sub" data-count></p>
+      </div>
+      <button class="btn btn--gold btn--lg" type="button" data-add><svg aria-hidden="true"><use href="#i-plus"/></svg>Dodaj auto</button>
+    </div>
+
+    <ol class="adm-list" data-list></ol>
+    <p class="adm-empty" data-empty hidden>Brak aut w ofercie. Dodaj pierwsze auto przyciskiem „Dodaj auto”.</p>
+
+    <p class="adm-note">Kolejność na liście to kolejność „Polecane” na stronie. Zmiany zapisują się w tej przeglądarce. Mogą zniknąć po wyczyszczeniu danych przeglądarki, dlatego publikuj je regularnie.</p>
+  </main>
+</div>
+
+<!-- ================================================================ EDYTOR AUTA -->
+<dialog class="adm-editor" data-editor aria-labelledby="ed-title">
+  <form class="adm-editor__form" data-editor-form novalidate>
+    <header class="adm-editor__head">
+      <h2 id="ed-title" data-ed-title>Nowe auto</h2>
+      <button class="adm-icon-btn" type="button" data-ed-cancel aria-label="Zamknij bez zapisywania"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+    </header>
+
+    <div class="adm-editor__body">
+      <section class="adm-sec">
+        <div class="adm-sec__head"><h3>Zdjęcia</h3><span class="adm-sec__meta" data-photo-count></span></div>
+        <p class="adm-hint">Pierwsze zdjęcie jest główne i pokazuje się na liście aut. Najlepiej poziome, w proporcji 4:3. Duże zdjęcia z telefonu zmniejszą się automatycznie.</p>
+        <label class="adm-drop" data-drop>
+          <input type="file" accept="image/*" multiple data-files>
+          <svg aria-hidden="true"><use href="#i-upload"/></svg>
+          <strong>Dodaj zdjęcia</strong>
+          <span>Kliknij albo przeciągnij pliki tutaj. Możesz wybrać kilka naraz.</span>
+        </label>
+        <p class="adm-progress" data-progress role="status" hidden></p>
+        <ol class="adm-photos" data-photos></ol>
+        <p class="field__error" data-err="images" hidden></p>
+      </section>
+
+      <section class="adm-sec">
+        <h3>Podstawowe dane</h3>
+        <div class="adm-grid">
+          <div class="field"><label for="e-make">Marka *</label><input class="input" id="e-make" name="make" list="dl-make" autocomplete="off"><p class="field__error" data-err="make" hidden></p></div>
+          <div class="field"><label for="e-model">Model *</label><input class="input" id="e-model" name="model" autocomplete="off"><p class="field__error" data-err="model" hidden></p></div>
+          <div class="field"><label for="e-version">Wersja</label><input class="input" id="e-version" name="version" placeholder="np. 2.0 TDI DSG Xcellence" autocomplete="off"></div>
+          <div class="field"><label for="e-year">Rok produkcji *</label><input class="input" id="e-year" name="year" type="number" inputmode="numeric" min="1950" max="2100"><p class="field__error" data-err="year" hidden></p></div>
+          <div class="field"><label for="e-mileage">Przebieg (km) *</label><input class="input" id="e-mileage" name="mileage" type="number" inputmode="numeric" min="0" step="1"><p class="field__error" data-err="mileage" hidden></p></div>
+          <div class="field"><label for="e-price">Cena (zł) *</label><input class="input" id="e-price" name="price" type="number" inputmode="numeric" min="0" step="100"><p class="field__error" data-err="price" hidden></p></div>
+        </div>
+        <label class="adm-check"><input type="checkbox" name="negotiable"> Cena do negocjacji</label>
+      </section>
+
+      <section class="adm-sec">
+        <h3>Dane techniczne</h3>
+        <div class="adm-grid">
+          <div class="field"><label for="e-fuel">Paliwo *</label>
+            <select class="select" id="e-fuel" name="fuel">
+              <option value="">Wybierz</option>
+              <option>Benzyna</option><option>Diesel</option><option>Benzyna + LPG</option>
+              <option>Hybryda</option><option>Hybryda plug-in</option><option>Elektryczny</option>
+            </select><p class="field__error" data-err="fuel" hidden></p></div>
+          <div class="field"><label for="e-gearbox">Skrzynia biegów</label>
+            <select class="select" id="e-gearbox" name="gearbox"><option value="">Nie podano</option><option>Manualna</option><option>Automatyczna</option></select></div>
+          <div class="field"><label for="e-gnote">Skrzynia: szczegóły</label><input class="input" id="e-gnote" name="gearboxNote" placeholder="np. DSG, 7 biegów" autocomplete="off"></div>
+          <div class="field"><label for="e-engine">Pojemność (cm³)</label><input class="input" id="e-engine" name="engine" type="number" inputmode="numeric" min="0"><p class="field__error" data-err="engine" hidden></p></div>
+          <div class="field"><label for="e-power">Moc (KM)</label><input class="input" id="e-power" name="power" type="number" inputmode="numeric" min="0"><p class="field__error" data-err="power" hidden></p></div>
+          <div class="field"><label for="e-drive">Napęd</label><input class="input" id="e-drive" name="drive" list="dl-drive" autocomplete="off"></div>
+          <div class="field"><label for="e-body">Nadwozie</label><input class="input" id="e-body" name="body" list="dl-body" autocomplete="off"></div>
+          <div class="field"><label for="e-color">Kolor</label><input class="input" id="e-color" name="color" list="dl-color" autocomplete="off"></div>
+          <div class="field"><label for="e-origin">Kraj pochodzenia</label><input class="input" id="e-origin" name="origin" list="dl-origin" autocomplete="off"></div>
+        </div>
+      </section>
+
+      <section class="adm-sec">
+        <h3>Atuty</h3>
+        <p class="adm-hint">Zaznacz tylko to, co jest potwierdzone. Dwa pierwsze zaznaczone atuty pokazują się na karcie auta.</p>
+        <div class="adm-checks">
+          <label class="adm-check"><input type="checkbox" name="f_accidentFree"> Bezwypadkowy</label>
+          <label class="adm-check"><input type="checkbox" name="f_firstOwner"> Pierwszy właściciel</label>
+          <label class="adm-check"><input type="checkbox" name="f_aso"> Serwisowany w ASO</label>
+          <label class="adm-check"><input type="checkbox" name="f_registeredPL"> Zarejestrowany w Polsce</label>
+          <label class="adm-check"><input type="checkbox" name="f_originalPaint"> Oryginalny lakier</label>
+          <label class="adm-check"><input type="checkbox" name="f_noSmoking"> Nie palono w aucie</label>
+          <label class="adm-check"><input type="checkbox" name="f_twoKeys"> Dwa kluczyki</label>
+        </div>
+        <div class="adm-grid adm-grid--2">
+          <div class="adm-combo">
+            <label class="adm-check"><input type="checkbox" name="warrantyOn"> Gwarancja</label>
+            <input class="input" name="warranty" aria-label="Okres gwarancji" placeholder="np. 12 miesięcy">
+          </div>
+          <div class="adm-combo">
+            <label class="adm-check"><input type="checkbox" name="inspectionOn"> Przegląd ważny do</label>
+            <input class="input" name="inspection" aria-label="Przegląd ważny do (miesiąc i rok)" placeholder="MM.RRRR, np. 04.2027">
+          </div>
+        </div>
+      </section>
+
+      <section class="adm-sec">
+        <h3>Wyposażenie</h3>
+        <p class="adm-hint">Jedna pozycja w wierszu. Najważniejsze wpisz na górze. Kliknij podpowiedź, żeby ją dodać albo usunąć.</p>
+        <textarea class="input textarea" name="highlights" rows="6" aria-label="Wyposażenie, jedna pozycja w wierszu"></textarea>
+        <div class="adm-chips" data-chips></div>
+      </section>
+
+      <section class="adm-sec">
+        <h3>Opis i widoczność</h3>
+        <div class="field"><label for="e-desc">Opis (opcjonalnie)</label><textarea class="input textarea" id="e-desc" name="description" rows="5" placeholder="Kilka zdań o aucie: stan, historia, co warto wiedzieć."></textarea></div>
+        <div class="field"><label for="e-otomoto">Link do ogłoszenia na Otomoto (opcjonalnie)</label><input class="input" id="e-otomoto" name="otomoto" type="url" inputmode="url" placeholder="https://www.otomoto.pl/osobowe/oferta/..."><p class="field__error" data-err="otomoto" hidden></p></div>
+        <label class="adm-check adm-check--strong"><input type="checkbox" name="visible" checked> Widoczne na stronie</label>
+      </section>
+    </div>
+
+    <footer class="adm-editor__foot">
+      <p class="adm-editor__msg" data-ed-msg role="alert" hidden></p>
+      <button class="btn btn--ghost" type="button" data-ed-cancel>Anuluj</button>
+      <button class="btn btn--gold" type="submit"><svg aria-hidden="true"><use href="#i-check"/></svg>Zapisz auto</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ================================================================ PUBLIKACJA -->
+<dialog class="adm-modal" data-publish aria-labelledby="pub-title">
+  <div class="adm-modal__box">
+    <h2 id="pub-title">Opublikuj zmiany</h2>
+    <p>Zmiany są zapisane tylko w tej przeglądarce. Żeby zobaczyli je wszyscy klienci:</p>
+    <ol class="adm-steps">
+      <li>Pobierz paczkę z ofertą (plik ZIP z danymi i zdjęciami).</li>
+      <li>Wgraj ją do repozytorium strony na GitHubie albo prześlij osobie, która opiekuje się stroną.</li>
+      <li>Po publikacji panel sam rozpozna, że zmiany są już na stronie.</li>
+    </ol>
+    <div class="adm-modal__actions">
+      <button class="btn btn--ghost" type="button" data-pub-close>Zamknij</button>
+      <button class="btn btn--gold" type="button" data-pub-download><svg aria-hidden="true"><use href="#i-download"/></svg>Pobierz paczkę</button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="dl-make">
+  <option>Alfa Romeo</option><option>Audi</option><option>BMW</option><option>Citroën</option><option>Cupra</option><option>Dacia</option>
+  <option>Fiat</option><option>Ford</option><option>Honda</option><option>Hyundai</option><option>Jeep</option><option>Kia</option>
+  <option>Land Rover</option><option>Lexus</option><option>Mazda</option><option>Mercedes-Benz</option><option>Mini</option>
+  <option>Mitsubishi</option><option>Nissan</option><option>Opel</option><option>Peugeot</option><option>Renault</option>
+  <option>Seat</option><option>Skoda</option><option>Suzuki</option><option>Toyota</option><option>Volkswagen</option><option>Volvo</option>
+</datalist>
+<datalist id="dl-drive"><option>Na przednie koła</option><option>Na tylne koła</option><option>4x4</option></datalist>
+<datalist id="dl-body"><option>SUV</option><option>Kombi</option><option>Hatchback</option><option>Sedan</option><option>Kompakt</option><option>Coupe</option><option>Kabriolet</option><option>Minivan</option><option>Van</option><option>Pickup</option></datalist>
+<datalist id="dl-color"><option>Biały</option><option>Biały metalik</option><option>Czarny</option><option>Czarny metalik</option><option>Szary metalik</option><option>Srebrny metalik</option><option>Niebieski metalik</option><option>Czerwony</option><option>Brązowy metalik</option><option>Zielony metalik</option><option>Beżowy</option></datalist>
+<datalist id="dl-origin"><option>Polska</option><option>Niemcy</option><option>Dania</option><option>Francja</option><option>Belgia</option><option>Holandia</option><option>Szwecja</option><option>Austria</option><option>Szwajcaria</option><option>Włochy</option><option>USA</option></datalist>
+
+<div class="toast" data-toast role="status" aria-live="polite" hidden></div>
+
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/inventory.js" defer></script>
+<script src="assets/js/store.js" defer></script>
+<script src="assets/js/admin.js" defer></script>
+</body>
+</html>
