@@ -81,7 +81,7 @@ Atuty w `facts`: `warranty: "12 miesięcy"`, `accidentFree`, `firstOwner`, `aso`
 - [ ] Ford Fiesta: moc, skrzynia, wyposażenie i link do ogłoszenia
 - [ ] Linki do Facebooka, Instagrama, YouTube i TikToka w `config.js`
 - [ ] Własny PIN panelu admina
-- [ ] Nazwa firmy z CEIDG i NIP w polityce prywatności
+- [ ] Kapitał zakładowy spółki w stopce `index.html` (wymóg art. 206 KSH, dane spółki już są)
 - [ ] Domena, `og:image`, `sitemap.xml`
 - [ ] Google Search Console oraz adres strony w Profilu Firmy w Google
 

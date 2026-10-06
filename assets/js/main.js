@@ -126,15 +126,9 @@
   function bindTexts() {
     var prices = CARS.map(function (c) { return c.price; });
     var n = CARS.length;
-    var min = n ? Math.min.apply(null, prices) : 0, max = n ? Math.max.apply(null, prices) : 0;
     var med = median(prices);
 
     $$('[data-bind="count"]').forEach(function (el) { el.textContent = n; });
-    $$('[data-bind="inventory-summary"]').forEach(function (el) {
-      el.textContent = n
-        ? n + " " + plural(n, "auto", "auta", "aut") + (n > 1 ? " w cenach od " + fmt(min) + " do " + zl(max) : " za " + zl(min)) + ". Każde obejrzysz i sprawdzisz na miejscu, przy Raciborskiej 267."
-        : "Oferta właśnie się zmienia. Zadzwoń, powiemy, co jest na placu.";
-    });
     $$('[data-bind="pcc-example"]').forEach(function (el) {
       if (med) el.textContent = "Przy aucie za " + zl(med) + " to " + zl(med * 0.02) + " oszczędności.";
     });
