@@ -645,21 +645,6 @@
     calc.addEventListener("input", function (e) { if (e.target !== calc.price) updateCalc(); });
   }
 
-  /* ---------- Mapa ładowana na żądanie ---------- */
-  function initMap() {
-    var btn = $("[data-load-map]");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      var f = document.createElement("iframe");
-      f.src = C.links.mapEmbed;
-      f.title = "Mapa dojazdu: " + B.name + ", " + B.street + ", " + B.city;
-      f.loading = "lazy";
-      f.referrerPolicy = "no-referrer-when-downgrade";
-      f.allowFullscreen = true;
-      $("[data-map]").replaceWith(f);
-    });
-  }
-
   /* ---------- Tablica w hero: delikatny ruch za kursorem ---------- */
   function initPlate() {
     var plate = $("[data-plate]"), hero = $(".hero");
@@ -719,21 +704,10 @@
     document.head.appendChild(s);
   }
 
-  /* ---------- Informacja o niepublikowanych zmianach (widzi ją tylko to urządzenie) ---------- */
-  function localNotice() {
-    var el = document.createElement("div");
-    el.className = "local-notice";
-    el.setAttribute("role", "status");
-    el.innerHTML = "<span>Podgląd zmian z panelu admina, widoczny tylko na tym urządzeniu.</span>" +
-      '<a href="admin.html">Panel admina</a>';
-    document.body.appendChild(el);
-  }
-
   /* ---------- Start ---------- */
   initHeader();
   updateStatus();
   setInterval(updateStatus, 60000);
-  initMap();
   initPlate();
 
   var fallback = function () { return { cars: (window.DANEK_INVENTORY || []).slice(), source: "published" }; };
@@ -751,7 +725,6 @@
     initDialog();
     initCalc();
     injectSchema();
-    if (r.source === "local") localNotice();
     fixOrphans(document.body);
     document.documentElement.classList.add("is-ready");
   });

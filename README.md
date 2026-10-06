@@ -34,7 +34,7 @@ Co można zrobić:
 
 ### Jak to działa na tym etapie (tryb lokalny)
 
-* Zmiany zapisują się w przeglądarce, w której używasz panelu. Na tym urządzeniu strona od razu je pokazuje, a na dole widać informację, że są niepublikowane.
+* Zmiany zapisują się w przeglądarce, w której używasz panelu. Na tym urządzeniu strona od razu je pokazuje.
 * Inni odwiedzający widzą opublikowaną ofertę z `assets/js/inventory.js`.
 * Przycisk **Opublikuj zmiany** pokazuje komisowi komunikat „Publikacja będzie dostępna wkrótce” (bez technicznych szczegółów).
 * Dla opiekuna strony: otwórz panel pod adresem `admin.html?dev`. Wtedy ten sam przycisk pozwala pobrać paczkę ZIP z nowym `assets/js/inventory.js` i zdjęciami. Rozpakuj ją do repozytorium (zastąp pliki), zrób commit i push. Po kilku minutach oferta jest widoczna dla wszystkich, a panel sam rozpozna, że zmiany zostały opublikowane. Paczkę pobiera się na tym urządzeniu, na którym zmiany zostały wprowadzone.
@@ -91,7 +91,7 @@ Zamiast paczki ZIP panel może zapisywać zmiany od razu na serwerze (na przykł
 
 ## Uwagi techniczne
 
-* Brak plików cookies analitycznych i reklamowych. Mapa Google ładuje się dopiero po kliknięciu.
+* Brak plików cookies analitycznych i reklamowych (poza tymi, które może zapisać osadzona mapa Google).
 * Link do konkretnego auta: `#auto-ID`, okno szczegółów ma galerię zdjęć (strzałki, miniatury, przesuwanie palcem, klawiatura).
 * Status „Otwarte / Zamknięte” liczony jest w czasie polskim. Godziny zmienisz w `config.js` i w tabeli godzin w `index.html`.
 * `404.html` sam rozpoznaje, czy strona działa pod własną domeną, pod `login.github.io`, czy w podfolderze repozytorium.

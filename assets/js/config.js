@@ -36,8 +36,7 @@ window.DANEK_CONFIG = {
     youtube: "",    // TODO
     tiktok: "",     // TODO
     googleReviews: "https://www.google.com/maps/search/?api=1&query=Auto%20Komis%20Danek%20%26%20Syn%20Rydu%C5%82towy",
-    directions: "https://www.google.com/maps/dir/?api=1&destination=50.07286814,18.40691913",
-    mapEmbed: "https://www.google.com/maps?q=Auto+Komis+Danek+%26+Syn,+Raciborska+267,+44-280+Rydu%C5%82towy&z=16&output=embed"
+    directions: "https://www.google.com/maps/dir/?api=1&destination=50.07286814,18.40691913"
   },
 
   // Ocena Google. TODO: sprawdź w profilu Google przed publikacją.
