@@ -55,7 +55,7 @@ window.DANEK_CONFIG = {
   // Panel admina (admin.html). Zmiana PIN-u: otwórz panel, w konsoli przeglądarki wpisz
   // danekHash("nowyPIN") i wynik wklej poniżej.
   admin: {
-    pinHash: "4fe43efc"
+    pinHash: "5d1f5626"
   },
 
   // Kalkulator raty: wartości startowe symulacji (nie oferta)
