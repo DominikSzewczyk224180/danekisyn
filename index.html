@@ -82,6 +82,9 @@
     <symbol id="i-chev-l" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15 6-6 6 6 6"/></symbol>
     <symbol id="i-chev-r" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></symbol>
     <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="1.6" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m21 15.5-5-5L6.5 19"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5 18.5v-5.6c0-4.2 2.2-6.8 6.2-7.7l.7 1.8c-2.3.8-3.4 2.3-3.5 4.4h2.8v7.1zm10 0v-5.6c0-4.2 2.2-6.8 6.2-7.7l.7 1.8c-2.3.8-3.4 2.3-3.5 4.4h2.8v7.1z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h3.4v14H7zm6.6 0H17v14h-3.4z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></symbol>
   </defs>
 </svg>
 
@@ -94,10 +97,12 @@
     </a>
 
     <nav class="nav" id="site-nav" aria-label="Główna nawigacja">
-      <a href="#oferta">Oferta</a>
-      <a href="#dlaczego">Dlaczego my</a>
+      <a href="#oferta">Katalog aut</a>
+      <a href="#o-nas">O nas</a>
+      <a href="#opinie">Opinie</a>
       <a href="#finansowanie">Finansowanie</a>
       <a href="#zamiana">Zamiana</a>
+      <a href="#social">Social media</a>
       <a href="#kontakt">Kontakt</a>
       <p class="nav__status status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-text>Pon. do pt. 9:00 do 17:00</span></p>
     </nav>
@@ -245,7 +250,7 @@
   </section>
 
   <!-- ================================================================ DLACZEGO -->
-  <section class="section section--gravel" id="dlaczego" aria-labelledby="dlaczego-title">
+  <section class="section section--gravel" id="o-nas" aria-labelledby="dlaczego-title">
     <div class="wrap why">
       <div class="why__intro">
         <h2 class="h2" id="dlaczego-title">Co zyskujesz, kupując u&nbsp;nas?</h2>
@@ -313,6 +318,63 @@
     </div>
   </section>
 
+  <!-- ================================================================ OPINIE -->
+  <section class="section section--graphite" id="opinie" aria-labelledby="opinie-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="h2" id="opinie-title">Opinie i wyróżnienia</h2>
+      </div>
+      <div class="proof">
+        <div class="proof__rating" data-show-if-rating>
+          <p class="proof__score" data-bind="rating">4,6</p>
+          <div class="proof__rating-meta">
+            <span class="stars" data-stars style="--pct: 92%" aria-hidden="true">
+              <span class="stars__base"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
+              <span class="stars__fill"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
+            </span>
+            <p>Średnia ocen w Google, <span data-bind="rating-count">82 opinie</span></p>
+            <a class="btn btn--ghost btn--compact" href="#" data-link="googleReviews" target="_blank" rel="noopener">Przeczytaj opinie w Google<svg aria-hidden="true"><use href="#i-external"/></svg></a>
+          </div>
+        </div>
+
+        <ul class="proof__list">
+          <li>
+            <svg aria-hidden="true"><use href="#i-award"/></svg>
+            <div>
+              <h3>Liderzy Jakości OTOMOTO</h3>
+              <p>Wyróżnienie wręczone podczas gali w Łodzi, wśród ponad 1500 zgłoszeń.</p>
+            </div>
+          </li>
+          <li>
+            <svg aria-hidden="true"><use href="#i-calendar"/></svg>
+            <div>
+              <h3>Na Otomoto od 2006 roku</h3>
+              <p>Konto na Otomoto mamy od 2006 roku. Każde nasze ogłoszenie możesz tam porównać i sprawdzić.</p>
+            </div>
+          </li>
+          <li>
+            <svg aria-hidden="true"><use href="#i-message"/></svg>
+            <div>
+              <h3>Szybko odpisujemy</h3>
+              <p>Otomoto oznacza nas jako sprzedawcę, który bardzo sprawnie odpowiada na wiadomości.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="reviews" data-reviews>
+      <div class="reviews__track" data-reviews-track tabindex="0" role="region" aria-label="Opinie klientów z Google, przewijane automatycznie"></div>
+      <div class="wrap reviews__foot">
+        <p class="reviews__note">Wybrane opinie klientów z naszego profilu w Google, niektóre skrócone. Nie sprawdzamy, czy autorzy opinii kupili u nas auto. Wszystkie opinie przeczytasz w Google.</p>
+        <div class="reviews__ctrl">
+          <button class="round-btn" type="button" data-rev="-1" aria-label="Poprzednie opinie"><svg aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+          <button class="round-btn" type="button" data-rev-toggle aria-pressed="false" aria-label="Zatrzymaj przewijanie"><svg class="i-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="i-play" aria-hidden="true"><use href="#i-play"/></svg></button>
+          <button class="round-btn" type="button" data-rev="1" aria-label="Następne opinie"><svg aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================================================================ FINANSOWANIE -->
   <section class="section section--deep" id="finansowanie" aria-labelledby="fin-title">
     <div class="wrap finance">
@@ -371,53 +433,6 @@
     </div>
   </section>
 
-  <!-- ================================================================ OPINIE -->
-  <section class="section section--graphite" id="opinie" aria-labelledby="opinie-title">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 class="h2" id="opinie-title">Opinie i wyróżnienia</h2>
-      </div>
-      <div class="proof">
-        <div class="proof__rating" data-show-if-rating>
-          <p class="proof__score" data-bind="rating">4,6</p>
-          <div class="proof__rating-meta">
-            <span class="stars" data-stars style="--pct: 92%" aria-hidden="true">
-              <span class="stars__base"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
-              <span class="stars__fill"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
-            </span>
-            <p>Średnia ocen w Google, <span data-bind="rating-count">82 opinie</span></p>
-            <a class="btn btn--ghost btn--compact" href="#" data-link="googleReviews" target="_blank" rel="noopener">Przeczytaj opinie w Google<svg aria-hidden="true"><use href="#i-external"/></svg></a>
-          </div>
-        </div>
-
-        <ul class="proof__list">
-          <li>
-            <svg aria-hidden="true"><use href="#i-award"/></svg>
-            <div>
-              <h3>Liderzy Jakości OTOMOTO</h3>
-              <p>Wyróżnienie wręczone podczas gali w Łodzi, wśród ponad 1500 zgłoszeń.</p>
-            </div>
-          </li>
-          <li>
-            <svg aria-hidden="true"><use href="#i-calendar"/></svg>
-            <div>
-              <h3>Na Otomoto od 2006 roku</h3>
-              <p>Konto na Otomoto mamy od 2006 roku. Każde nasze ogłoszenie możesz tam porównać i sprawdzić.</p>
-            </div>
-          </li>
-          <li>
-            <svg aria-hidden="true"><use href="#i-message"/></svg>
-            <div>
-              <h3>Szybko odpisujemy</h3>
-              <p>Otomoto oznacza nas jako sprzedawcę, który bardzo sprawnie odpowiada na wiadomości.</p>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div class="quotes" data-quotes hidden></div>
-    </div>
-  </section>
-
   <!-- ================================================================ ZAMIANA -->
   <section class="section section--gravel section--tight" id="zamiana" aria-labelledby="zamiana-title">
     <div class="wrap trade">
@@ -426,6 +441,17 @@
         <p>Zadzwoń i opisz je w kilku słowach: marka, rocznik, przebieg. Powiemy, co możemy zaproponować. To nic nie kosztuje i do niczego nie zobowiązuje.</p>
       </div>
       <a class="btn btn--dark btn--lg" href="tel:+48792624919"><svg aria-hidden="true"><use href="#i-phone"/></svg>Zadzwoń: 792&nbsp;624&nbsp;919</a>
+    </div>
+  </section>
+
+  <!-- ================================================================ SOCIAL MEDIA -->
+  <section class="section section--graphite section--tight" id="social" aria-labelledby="social-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="h2" id="social-title">Obserwuj nas</h2>
+        <p>Na Facebooku, Instagramie i TikToku pokazujemy nowe auta i filmy z placu.</p>
+      </div>
+      <ul class="socials" data-social-cards></ul>
     </div>
   </section>
 
@@ -505,7 +531,9 @@
     <nav aria-label="Stopka">
       <h2 class="site-footer__h">Na skróty</h2>
       <ul class="site-footer__links">
-        <li><a href="#oferta">Oferta</a></li>
+        <li><a href="#oferta">Katalog aut</a></li>
+        <li><a href="#o-nas">O nas</a></li>
+        <li><a href="#opinie">Opinie</a></li>
         <li><a href="#finansowanie">Finansowanie</a></li>
         <li><a href="#zamiana">Zamiana auta</a></li>
         <li><a href="#kontakt">Kontakt i dojazd</a></li>

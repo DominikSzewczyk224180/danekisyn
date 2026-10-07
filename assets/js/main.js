@@ -158,13 +158,6 @@
       }).join("");
     }
 
-    var quotesEl = $("[data-quotes]");
-    if (quotesEl && R.quotes && R.quotes.length) {
-      quotesEl.innerHTML = R.quotes.map(function (q) {
-        return '<blockquote class="quote"><p>' + esc(q.text) + "</p><footer>" + esc(q.author) + (q.source ? ", " + esc(q.source) : "") + "</footer></blockquote>";
-      }).join("");
-      quotesEl.hidden = false;
-    }
   }
 
   /* ---------- Nagłówek i menu ---------- */
@@ -184,7 +177,7 @@
     toggle.addEventListener("click", function () { setMenu(toggle.getAttribute("aria-expanded") !== "true"); });
     nav.addEventListener("click", function (e) { if (e.target.closest("a")) setMenu(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
-    window.matchMedia("(min-width: 981px)").addEventListener("change", function (e) { if (e.matches) setMenu(false); });
+    window.matchMedia("(min-width: 1101px)").addEventListener("change", function (e) { if (e.matches) setMenu(false); });
 
     if ("IntersectionObserver" in window) {
       var links = $$(".nav a[href^='#']");
@@ -645,6 +638,102 @@
     calc.addEventListener("input", function (e) { if (e.target !== calc.price) updateCalc(); });
   }
 
+  /* ---------- Opinie klientów: płynnie przewijana taśma ---------- */
+  function initReviews() {
+    var Q = (C.reviews && C.reviews.quotes) || [];
+    var box = $("[data-reviews]"), track = $("[data-reviews-track]");
+    if (!box || !track) return;
+    if (!Q.length) { box.hidden = true; return; }
+    function card(q, clone) {
+      var name = String(q.author || "Klient");
+      return '<figure class="review"' + (clone ? ' aria-hidden="true"' : "") + ">" +
+        '<div class="review__top">' + icon("i-quote") + (q.car ? '<span class="review__car">' + esc(q.car) + "</span>" : "") + "</div>" +
+        "<blockquote><p>" + esc(q.text) + "</p></blockquote>" +
+        '<figcaption><span class="review__avatar" aria-hidden="true">' + esc(name.charAt(0).toUpperCase()) + "</span>" +
+          '<span class="review__who"><span class="review__name">' + esc(name) + '</span><span class="review__src">' + esc(q.source || "Opinia z Google") + "</span></span>" +
+        "</figcaption>" +
+      "</figure>";
+    }
+    // dwa komplety kart: po dojściu do końca pierwszego taśma niezauważalnie wraca na początek
+    track.innerHTML = Q.map(function (q) { return card(q, false); }).join("") + Q.map(function (q) { return card(q, true); }).join("");
+    fixOrphans(track);
+    var cards = $$(".review", track);
+    function loopWidth() { return cards[Q.length].offsetLeft - cards[0].offsetLeft; }
+    function step() { return cards[1].offsetLeft - cards[0].offsetLeft; }
+
+    var toggle = $("[data-rev-toggle]");
+    var playing = !reduceMotion, hover = false, hold = false, inView = false;
+    var pos = 0, last = 0, holdTimer = 0;
+    if (reduceMotion && toggle) toggle.hidden = true;
+
+    function holdFor(ms) {
+      hold = true;
+      clearTimeout(holdTimer);
+      holdTimer = setTimeout(function () { hold = false; pos = track.scrollLeft; }, ms);
+    }
+    function frame(t) {
+      var dt = last ? Math.min(64, t - last) : 0;
+      last = t;
+      if (playing && inView && !hover && !hold && !document.hidden) {
+        pos += 32 * dt / 1000;
+        var lw = loopWidth();
+        if (lw > 0 && pos >= lw) pos -= lw;
+        track.scrollLeft = pos;
+      }
+      requestAnimationFrame(frame);
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) { inView = en[0].isIntersecting; }).observe(track);
+    } else { inView = true; }
+
+    track.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hover = true; });
+    track.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { hover = false; pos = track.scrollLeft; } });
+    track.addEventListener("focusin", function () { hover = true; });
+    track.addEventListener("focusout", function () { hover = false; pos = track.scrollLeft; });
+    ["touchstart", "wheel", "pointerdown"].forEach(function (ev) {
+      track.addEventListener(ev, function () { holdFor(3000); }, { passive: true });
+    });
+    track.addEventListener("scroll", function () { if (hold || hover) pos = track.scrollLeft; }, { passive: true });
+
+    $$("[data-rev]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        holdFor(3500);
+        var dir = +b.getAttribute("data-rev"), lw = loopWidth(), st = step();
+        if (dir < 0 && track.scrollLeft < st) track.scrollLeft += lw;
+        if (dir > 0 && track.scrollLeft + st >= lw) track.scrollLeft -= lw;
+        track.scrollBy({ left: dir * st, behavior: reduceMotion ? "auto" : "smooth" });
+      });
+    });
+    if (toggle) toggle.addEventListener("click", function () {
+      playing = !playing;
+      toggle.setAttribute("aria-pressed", String(!playing));
+      toggle.setAttribute("aria-label", playing ? "Zatrzymaj przewijanie" : "Wznów przewijanie");
+      pos = track.scrollLeft;
+    });
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- Social media: kafelki z config.js ---------- */
+  function initSocial() {
+    var box = $("[data-social-cards]");
+    if (!box) return;
+    var path = function (u) { try { return new URL(u).pathname.replace(/\/+$/, "").split("/").pop(); } catch (e) { return ""; } };
+    var NETS = [
+      { key: "facebook", name: "Facebook", handle: B.name, cta: "Obserwuj na Facebooku" },
+      { key: "instagram", name: "Instagram", handle: "@" + path(C.links.instagram || ""), cta: "Obserwuj na Instagramie" },
+      { key: "tiktok", name: "TikTok", handle: path(C.links.tiktok || ""), cta: "Obserwuj na TikToku" },
+      { key: "youtube", name: "YouTube", handle: "Kanał komisu", cta: "Zobacz na YouTube" }
+    ].filter(function (n) { return C.links[n.key]; });
+    if (!NETS.length) { $("#social").hidden = true; return; }
+    box.innerHTML = NETS.map(function (n) {
+      return '<li><a class="social-card social-card--' + n.key + '" href="' + esc(C.links[n.key]) + '" target="_blank" rel="noopener">' +
+        '<span class="social-card__icon">' + icon("i-" + n.key) + "</span>" +
+        '<span class="social-card__text"><span class="social-card__name">' + n.name + '</span><span class="social-card__handle">' + esc(n.handle) + "</span></span>" +
+        '<span class="social-card__cta">' + n.cta + icon("i-external") + "</span>" +
+      "</a></li>";
+    }).join("");
+  }
+
   /* ---------- Tablica w hero: delikatny ruch za kursorem ---------- */
   function initPlate() {
     var plate = $("[data-plate]"), hero = $(".hero");
@@ -709,6 +798,8 @@
   updateStatus();
   setInterval(updateStatus, 60000);
   initPlate();
+  initReviews();
+  initSocial();
 
   var fallback = function () { return { cars: (window.DANEK_INVENTORY || []).slice(), source: "published" }; };
   var loading = window.DanekStore

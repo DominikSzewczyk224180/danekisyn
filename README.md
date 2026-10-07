@@ -79,7 +79,6 @@ Atuty w `facts`: `warranty: "12 miesięcy"`, `accidentFree`, `firstOwner`, `aso`
 
 - [ ] Ocena i liczba opinii Google w `config.js` (teraz 4,6 i 82)
 - [ ] Ford Fiesta: moc, skrzynia, wyposażenie i link do ogłoszenia
-- [ ] Linki do Facebooka, Instagrama, YouTube i TikToka w `config.js`
 - [ ] Własny PIN panelu admina
 - [ ] Kapitał zakładowy spółki w stopce `index.html` (wymóg art. 206 KSH, dane spółki już są)
 - [ ] Domena, `og:image`, `sitemap.xml`
@@ -92,6 +91,7 @@ Zamiast paczki ZIP panel może zapisywać zmiany od razu na serwerze (na przykł
 ## Uwagi techniczne
 
 * Brak plików cookies analitycznych i reklamowych (poza tymi, które może zapisać osadzona mapa Google).
+* Opinie klientów (przewijana taśma) i linki do social mediów ustawiasz w `config.js` (`reviews.quotes`, `links`).
 * Link do konkretnego auta: `#auto-ID`, okno szczegółów ma galerię zdjęć (strzałki, miniatury, przesuwanie palcem, klawiatura).
 * Status „Otwarte / Zamknięte” liczony jest w czasie polskim. Godziny zmienisz w `config.js` i w tabeli godzin w `index.html`.
 * `404.html` sam rozpoznaje, czy strona działa pod własną domeną, pod `login.github.io`, czy w podfolderze repozytorium.
