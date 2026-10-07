@@ -41,7 +41,7 @@ window.DANEK_INVENTORY = [
       "Keyless Go"
     ],
     images: ["assets/img/cars/audi-q3.webp"],
-    imageAlt: "Białe Audi Q3 na placu komisu Danek & Syn",
+    imageAlt: "Białe Audi Q3 w komisie Danek & Syn",
     otomoto: "https://www.otomoto.pl/osobowe/oferta/audi-q3-ID6Igw3p.html"
   },
   {
@@ -108,7 +108,7 @@ window.DANEK_INVENTORY = [
       "Felgi aluminiowe 18 cali"
     ],
     images: ["assets/img/cars/opel-mokka.webp"],
-    imageAlt: "Brązowy Opel Mokka na placu komisu Danek & Syn",
+    imageAlt: "Brązowy Opel Mokka w komisie Danek & Syn",
     otomoto: "https://www.otomoto.pl/osobowe/oferta/opel-mokka-ID6If8U0.html"
   },
   {
@@ -141,7 +141,7 @@ window.DANEK_INVENTORY = [
       "Felgi aluminiowe 18 cali"
     ],
     images: ["assets/img/cars/seat-leon.webp"],
-    imageAlt: "Szary Seat Leon kombi na placu komisu Danek & Syn",
+    imageAlt: "Szary Seat Leon kombi w komisie Danek & Syn",
     otomoto: "https://www.otomoto.pl/osobowe/oferta/seat-leon-ID6Ie9o2.html"
   },
   {
@@ -174,7 +174,7 @@ window.DANEK_INVENTORY = [
       "Świeżo po serwisie"
     ],
     images: ["assets/img/cars/nissan-qashqai.webp"],
-    imageAlt: "Szary Nissan Qashqai na placu komisu Danek & Syn",
+    imageAlt: "Szary Nissan Qashqai w komisie Danek & Syn",
     otomoto: "https://www.otomoto.pl/osobowe/oferta/nissan-qashqai-ID6Ie3hK.html"
   },
   {
@@ -206,7 +206,7 @@ window.DANEK_INVENTORY = [
       "Apple CarPlay i Android Auto"
     ],
     images: ["assets/img/cars/ford-kuga.webp"],
-    imageAlt: "Srebrny Ford Kuga ST-Line na placu komisu Danek & Syn",
+    imageAlt: "Srebrny Ford Kuga ST-Line w komisie Danek & Syn",
     otomoto: "https://www.otomoto.pl/osobowe/oferta/ford-kuga-ID6IanwW.html"
   },
   {
@@ -228,7 +228,7 @@ window.DANEK_INVENTORY = [
     facts: {},
     highlights: [],
     images: ["assets/img/cars/ford-fiesta.webp"],
-    imageAlt: "Niebieski Ford Fiesta ST-Line na placu komisu Danek & Syn",
+    imageAlt: "Niebieski Ford Fiesta ST-Line w komisie Danek & Syn",
     otomoto: "https://danek.otomoto.pl/inventory"
   }
 ];

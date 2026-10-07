@@ -773,3 +773,6 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
   .btn { white-space: normal; text-align: center; }
   .calc__result .btn { width: 100%; }
 }
+
+.reviews__note a { color: var(--mgla); text-decoration-color: var(--line-2); }
+.reviews__note a:hover { color: var(--rama); }
