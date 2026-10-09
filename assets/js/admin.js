@@ -30,6 +30,7 @@
   }
   function icon(id) { return '<svg aria-hidden="true"><use href="#' + id + '"/></svg>'; }
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
+  function isImageFile(f) { return /^image\//.test(f.type) || /\.(jpe?g|png|webp|heic|heif|gif|bmp)$/i.test(f.name); }
   var toastTimer = 0;
   function toast(msg) {
     var el = $("[data-toast]");
@@ -78,14 +79,17 @@
   $("[data-logout]").addEventListener("click", function () { setAuthed(false); showLogin(); });
 
   /* ---------- Stan ---------- */
-  var st = { cars: [], source: "published", updatedAt: 0, storageError: false };
+  var st = { cars: [], gallery: [], reviews: [], source: "published", updatedAt: 0, storageError: false };
   var urls = {};
   function urlOf(ref) { return S.imageUrl(ref).then(function (u) { urls[ref] = u; return u; }); }
-  function loadThumbs() { return Promise.all(st.cars.map(function (c) { return c.images[0] ? urlOf(c.images[0]) : null; })); }
+  function loadThumbs() { return Promise.all(st.cars.map(function (c) { return c.images[0] ? urlOf(c.images[0]) : null; }).concat(st.gallery.map(urlOf))); }
+  function dataState() { return { cars: st.cars, gallery: st.gallery, reviews: st.reviews }; }
 
   function load() {
     return S.load().then(function (r) {
       st.cars = r.cars;
+      st.gallery = r.gallery || [];
+      st.reviews = r.reviews || [];
       st.source = r.source;
       st.updatedAt = r.updatedAt;
       st.storageError = !!r.storageError;
@@ -94,10 +98,10 @@
   }
 
   function save(message) {
-    return S.saveLocal(st.cars).then(function (meta) {
+    return S.saveLocal(dataState()).then(function (meta) {
       st.source = "local";
       st.updatedAt = meta.updatedAt;
-      return S.cleanupImages(st.cars);
+      return S.cleanupImages(dataState());
     }).then(loadThumbs).then(function () {
       render();
       if (message) toast(message);
@@ -166,7 +170,7 @@
       "</li>";
     }).join("");
   }
-  function render() { renderState(); renderList(); }
+  function render() { renderState(); renderList(); renderGallery(); renderReviews(); renderTabCounts(); }
 
   function uniqueId(c, except) {
     var base = slug(c.make + "-" + c.model + "-" + c.year) || "auto";
@@ -220,7 +224,7 @@
   $("[data-pub-download]").addEventListener("click", function () {
     var btn = this;
     btn.disabled = true;
-    S.exportZip(st.cars, st.updatedAt).then(function (blob) {
+    S.exportZip(dataState(), st.updatedAt).then(function (blob) {
       var name = "danek-syn-oferta-" + new Date().toISOString().slice(0, 10) + ".zip";
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -409,7 +413,7 @@
   function closeEditor() { if (ed.open) ed.close(); }
   ed.addEventListener("close", function () {
     document.documentElement.classList.remove("is-locked");
-    if (!saved) S.cleanupImages(st.cars).catch(function () {});
+    if (!saved) S.cleanupImages(dataState()).catch(function () {});
     edit = null;
   });
   $$("[data-ed-cancel]").forEach(function (b) { b.addEventListener("click", closeEditor); });
@@ -468,9 +472,7 @@
 
   function addFiles(fileList) {
     if (!edit) return;
-    var files = Array.prototype.slice.call(fileList || []).filter(function (f) {
-      return /^image\//.test(f.type) || /\.(jpe?g|png|webp|heic|heif|gif|bmp)$/i.test(f.name);
-    });
+    var files = Array.prototype.slice.call(fileList || []).filter(isImageFile);
     if (!files.length) return;
     var prog = $("[data-progress]");
     var done = 0, failed = [];
@@ -530,8 +532,137 @@
     this._t = setTimeout(renderChips, 250);
   });
 
+  /* ---------- Zakładki panelu ---------- */
+  function showTab(name) {
+    $$("[data-tab]").forEach(function (t) { t.setAttribute("aria-selected", String(t.getAttribute("data-tab") === name)); });
+    $$("[data-panel]").forEach(function (p) { p.hidden = p.getAttribute("data-panel") !== name; });
+    try { sessionStorage.setItem("danek-admin-tab", name); } catch (e) {}
+  }
+  $$("[data-tab]").forEach(function (t) { t.addEventListener("click", function () { showTab(t.getAttribute("data-tab")); }); });
+  function renderTabCounts() {
+    [["cars", st.cars.length], ["gallery", st.gallery.length], ["reviews", st.reviews.length]].forEach(function (x) {
+      var el = $('[data-tab-count="' + x[0] + '"]');
+      if (el) el.textContent = x[1];
+    });
+  }
+
+  /* ---------- Galeria sprzedanych aut ---------- */
+  function renderGallery() {
+    var listEl = $("[data-gal-list]");
+    var n = st.gallery.length;
+    $("[data-gal-empty]").hidden = n > 0;
+    listEl.innerHTML = st.gallery.map(function (ref, i) {
+      var u = urls[ref] || "";
+      return '<li class="adm-photo">' + (u ? '<img src="' + esc(u) + '" alt="Zdjęcie ' + (i + 1) + '">' : "") +
+        '<div class="adm-photo__tools">' +
+          '<button type="button" class="adm-icon-btn" data-g="left" data-i="' + i + '" aria-label="Przesuń w lewo"' + (i === 0 ? " disabled" : "") + ">" + icon("i-chev-l") + "</button>" +
+          '<button type="button" class="adm-icon-btn" data-g="right" data-i="' + i + '" aria-label="Przesuń w prawo"' + (i === n - 1 ? " disabled" : "") + ">" + icon("i-chev-r") + "</button>" +
+          '<button type="button" class="adm-icon-btn adm-icon-btn--danger" data-g="del" data-i="' + i + '" aria-label="Usuń zdjęcie" title="Usuń zdjęcie">' + icon("i-trash") + "</button>" +
+        "</div></li>";
+    }).join("");
+  }
+  $("[data-gal-list]").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-g]");
+    if (!b) return;
+    var i = +b.getAttribute("data-i"), a = b.getAttribute("data-g"), g = st.gallery;
+    if (a === "left" && i > 0) g.splice(i - 1, 0, g.splice(i, 1)[0]);
+    if (a === "right" && i < g.length - 1) g.splice(i + 1, 0, g.splice(i, 1)[0]);
+    if (a === "del") {
+      if (!window.confirm("Usunąć to zdjęcie z galerii?")) return;
+      g.splice(i, 1);
+    }
+    save(a === "del" ? "Zdjęcie usunięte z galerii" : "");
+  });
+  function addGalleryFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList || []).filter(isImageFile);
+    if (!files.length) return;
+    var prog = $("[data-gal-progress]");
+    var done = 0, failed = [];
+    prog.hidden = false;
+    prog.textContent = "Przygotowuję zdjęcia: 0 z " + files.length;
+    var chain = Promise.resolve();
+    files.forEach(function (f) {
+      chain = chain.then(function () {
+        return S.processImage(f).then(S.saveImage).then(function (ref) { st.gallery.push(ref); })
+          .catch(function () { failed.push(f.name); })
+          .then(function () { done++; prog.textContent = "Przygotowuję zdjęcia: " + done + " z " + files.length; });
+      });
+    });
+    chain.then(function () {
+      var ok = files.length - failed.length;
+      return save(ok ? "Dodano do galerii: " + ok + " " + plural(ok, "zdjęcie", "zdjęcia", "zdjęć") : "").then(function () {
+        prog.textContent = failed.length ? "Nie udało się wczytać: " + failed.join(", ") + ". Zapisz te zdjęcia jako JPG i dodaj ponownie." : "Gotowe.";
+        if (!failed.length) setTimeout(function () { prog.hidden = true; }, 2200);
+      });
+    });
+  }
+  $("[data-gal-files]").addEventListener("change", function () { addGalleryFiles(this.files); this.value = ""; });
+  var galDrop = $("[data-gal-drop]");
+  ["dragenter", "dragover"].forEach(function (t) { galDrop.addEventListener(t, function (e) { e.preventDefault(); galDrop.classList.add("is-over"); }); });
+  ["dragleave", "drop"].forEach(function (t) { galDrop.addEventListener(t, function (e) { e.preventDefault(); galDrop.classList.remove("is-over"); }); });
+  galDrop.addEventListener("drop", function (e) { addGalleryFiles(e.dataTransfer && e.dataTransfer.files); });
+
+  /* ---------- Opinie ---------- */
+  function renderReviews() {
+    var listEl = $("[data-rev-list]");
+    var n = st.reviews.length;
+    $("[data-rev-empty]").hidden = n > 0;
+    listEl.innerHTML = st.reviews.map(function (r, i) {
+      return '<li class="adm-rev" data-ri="' + i + '">' +
+        '<div class="adm-car__order">' +
+          '<button class="adm-icon-btn" type="button" data-ract="up" aria-label="Przesuń wyżej"' + (i === 0 ? " disabled" : "") + ">" + icon("i-up") + "</button>" +
+          '<button class="adm-icon-btn" type="button" data-ract="down" aria-label="Przesuń niżej"' + (i === n - 1 ? " disabled" : "") + ">" + icon("i-down") + "</button>" +
+        "</div>" +
+        '<div class="adm-rev__avatar" aria-hidden="true">' + esc(String(r.author || "?").charAt(0).toUpperCase()) + "</div>" +
+        '<div class="adm-car__info"><p class="adm-car__name">' + esc(r.author || "") + (r.car ? ' <span class="adm-badge">' + esc(r.car) + "</span>" : "") + "</p>" +
+          '<p class="adm-rev__text">' + esc(r.text || "") + "</p></div>" +
+        '<div class="adm-car__actions">' +
+          '<button class="btn btn--ghost btn--compact" type="button" data-ract="edit">' + icon("i-edit") + "Edytuj</button>" +
+          '<button class="adm-icon-btn adm-icon-btn--danger" type="button" data-ract="delete" aria-label="Usuń opinię" title="Usuń opinię">' + icon("i-trash") + "</button>" +
+        "</div></li>";
+    }).join("");
+  }
+  var revEd = $("[data-rev-editor]"), revForm = $("[data-rev-form]"), revIndex = null;
+  function rf(n) { return revForm.elements.namedItem(n); }
+  function openReview(i) {
+    revIndex = i;
+    var r = i == null ? {} : st.reviews[i];
+    rf("author").value = r.author || "";
+    rf("car").value = r.car || "";
+    rf("body").value = r.text || "";
+    $$("[data-rerr]", revForm).forEach(function (p) { p.hidden = true; });
+    $("[data-rev-title]").textContent = i == null ? "Nowa opinia" : "Edycja opinii";
+    revEd.showModal();
+    rf("author").focus();
+  }
+  $("[data-rev-add]").addEventListener("click", function () { openReview(null); });
+  $("[data-rev-cancel]").addEventListener("click", function () { revEd.close(); });
+  revForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var author = rf("author").value.trim(), car = rf("car").value.trim(), text = rf("body").value.trim();
+    $('[data-rerr="author"]', revForm).hidden = !!author;
+    $('[data-rerr="body"]', revForm).hidden = !!text;
+    if (!author || !text) return;
+    var r = { author: author, text: text };
+    if (car) r.car = car;
+    var isNew = revIndex == null;
+    if (isNew) st.reviews.unshift(r); else st.reviews[revIndex] = r;
+    revEd.close();
+    save(isNew ? "Dodano opinię" : "Zapisano opinię");
+  });
+  $("[data-rev-list]").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-ract]");
+    if (!b) return;
+    var i = +b.closest("[data-ri]").getAttribute("data-ri"), a = b.getAttribute("data-ract"), R = st.reviews;
+    if (a === "edit") openReview(i);
+    if (a === "up" && i > 0) { R.splice(i - 1, 0, R.splice(i, 1)[0]); save(); }
+    if (a === "down" && i < R.length - 1) { R.splice(i + 1, 0, R.splice(i, 1)[0]); save(); }
+    if (a === "delete" && window.confirm("Usunąć opinię: " + R[i].author + "?")) { R.splice(i, 1); save("Opinia usunięta"); }
+  });
+
   /* ---------- Start ---------- */
   if (!S) { document.body.innerHTML = "<p style='padding:24px'>Brak pliku store.js.</p>"; return; }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+  try { var lastTab = sessionStorage.getItem("danek-admin-tab"); if (lastTab) showTab(lastTab); } catch (e) {}
   if (authed()) showApp(); else showLogin();
 })();

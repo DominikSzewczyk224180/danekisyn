@@ -37,7 +37,7 @@
     "image": "assets/img/og-image.jpg",
     "logo": "assets/img/icon-512.png",
     "telephone": "+48 792 624 919",
-    "email": "samochody.danek@interia.pl",
+    "email": "samochody.danek_syn@o2.pl",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "ul. Raciborska 267",
@@ -85,6 +85,11 @@
     <symbol id="i-quote" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5 18.5v-5.6c0-4.2 2.2-6.8 6.2-7.7l.7 1.8c-2.3.8-3.4 2.3-3.5 4.4h2.8v7.1zm10 0v-5.6c0-4.2 2.2-6.8 6.2-7.7l.7 1.8c-2.3.8-3.4 2.3-3.5 4.4h2.8v7.1z"/></symbol>
     <symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h3.4v14H7zm6.6 0H17v14h-3.4z"/></symbol>
     <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></symbol>
+    <symbol id="i-thumb" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M7.5 10.5v9h-3v-9zm0 0 3.6-6.6c1.4.1 2.4 1.2 2.1 2.7l-.6 3H18a2 2 0 0 1 2 2.3l-1.1 5.8a2 2 0 0 1-2 1.8H7.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 3.2 19 6v5.4c0 4.3-2.9 8.1-7 9.4-4.1-1.3-7-5.1-7-9.4V6z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="m8.8 12 2.2 2.2 4.3-4.4"/></symbol>
+    <symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M3.7 10.6c2.8-.9 5.6-1.2 6.1-.4m10.5.4c-2.8-.9-5.6-1.2-6.1-.4M12 14.4v6.2"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 8h13.5L14 4.5M20 16H6.5l3.5 3.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="m15 15 5 5"/></symbol>
   </defs>
 </svg>
 
@@ -98,10 +103,10 @@
 
     <nav class="nav" id="site-nav" aria-label="Główna nawigacja">
       <a href="#oferta">Katalog aut</a>
+      <a href="#poznaj-oferte">Poznaj naszą ofertę</a>
       <a href="#o-nas">O nas</a>
       <a href="#opinie">Opinie</a>
       <a href="#finansowanie">Finansowanie</a>
-      <a href="#zamiana">Zamiana</a>
       <a href="#social">Social media</a>
       <a href="#kontakt">Kontakt</a>
       <p class="nav__status status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-text>Pon. do pt. 9:00 do 17:00</span></p>
@@ -128,7 +133,8 @@
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <h1 class="hero__title" id="hero-title">Sprawdzone auta,<br>uczciwe zasady.</h1>
-        <p class="hero__lead">Rodzinny komis Danek &amp; Syn w Rydułtowach. Auta po opłatach, z fakturą <span class="nowrap">VAT-marża</span>, z możliwością sprawdzenia w ASO i finansowaniem bez wkładu własnego.</p>
+        <p class="hero__lead">Od 2006 roku łączymy rodzinną tradycję z nowoczesnymi standardami sprzedaży samochodów. Oferujemy wyłącznie starannie wyselekcjonowane auta, uczciwe podejście i jakość, której możesz zaufać.</p>
+        <p class="hero__lead">Nasze zaangażowanie zostało docenione wyróżnieniem w Konkursie Liderzy Jakości spośród ponad 1500 zgłoszeń. To dla nas potwierdzenie, że zaufanie i najwyższe standardy zawsze są na pierwszym miejscu.</p>
         <div class="hero__actions">
           <a class="btn btn--gold btn--lg" href="#oferta">
             Zobacz dostępne auta
@@ -153,7 +159,7 @@
           <span class="plate__screw plate__screw--r"></span>
         </div>
       </div>
-      <svg class="hero__car" viewBox="66 0 862 360" aria-hidden="true" focusable="false">
+      <svg class="hero__car" viewBox="26 0 950 360" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="car-beam" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFE7A8" stop-opacity=".5"/><stop offset=".55" stop-color="#FFE7A8" stop-opacity=".12"/><stop offset="1" stop-color="#FFE7A8" stop-opacity="0"/></linearGradient>
           <radialGradient id="car-shadow"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
@@ -161,27 +167,24 @@
           <filter id="car-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
           <filter id="car-glow" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <ellipse class="c-shadow" cx="496" cy="360" rx="440" ry="13" fill="url(#car-shadow)"/>
-        <path class="c-beam" d="M82 202L-740 254L-740 360L82 230Z" fill="url(#car-beam)" filter="url(#car-blur)"/>
-        <path class="c-body" d="M98 320L86 318C79 317 76 312 75 305L73 262C72 244 74 228 80 214C86 200 96 190 112 184C170 174 248 162 318 154C356 124 404 82 456 56C540 38 704 36 818 50C838 54 852 62 860 72C866 80 868 88 865 94C876 120 888 148 898 176C908 200 916 230 918 258C920 290 916 312 900 320L828.5 320A84 84 0 1 0 671.5 320L308.5 320A84 84 0 1 0 151.5 320L98 320Z" pathLength="1"/>
-        <path class="c-glass" d="M338 150C372 122 418 84 466 64C556 50 712 48 808 60C828 66 842 82 848 100C852 112 852 124 848 134C680 140 500 146 338 150Z" pathLength="1"/>
-        <path class="c-pillar" d="M576 52L586 51L591 146L581 146Z"/><path class="c-pillar" d="M742 54L754 55L766 139L752 140Z"/>
-        <path class="c-line" d="M126 196C360 182 640 172 890 166" pathLength="1"/><path class="c-line" d="M322 286C450 282 560 280 662 278" pathLength="1"/><path class="c-line" d="M340 152C336 196 328 256 326 318" pathLength="1"/><path class="c-line" d="M586 146C588 200 590 270 592 318" pathLength="1"/><path class="c-line" d="M759 139C764 168 756 194 744 206" pathLength="1"/><path class="c-line" d="M76 280C98 282 124 283 148 284" pathLength="1"/>
-        <path class="c-line c-line--strong" d="M452 184L488 182M652 178L686 176"/>
-        <path class="c-mirror" d="M340 158C340 148 350 142 364 140L376 141C380 149 378 158 371 163L352 165C344 165 340 163 340 158Z" pathLength="1"/>
-        <path class="c-well" d="M151.5 320A84 84 0 1 1 308.5 320Z"/><circle class="c-tire" cx="230" cy="290" r="70" pathLength="1"/><circle class="c-rim" cx="230" cy="290" r="49" pathLength="1"/><circle class="c-rim c-rim--thin" cx="230" cy="290" r="30"/><circle class="c-hub" cx="230" cy="290" r="8"/><path class="c-spoke" d="M228.7 278.1L226.9 244.1M231.3 278.1L233.1 244.1M241.0 285.1L272.7 272.8M241.7 287.5L274.6 278.8M238.0 298.9L259.5 325.3M236.0 300.4L254.4 329.0M224.0 300.4L205.6 329.0M222.0 298.9L200.5 325.3M218.3 287.5L185.4 278.8M219.0 285.1L187.3 272.8"/>
-        <path class="c-well" d="M671.5 320A84 84 0 1 1 828.5 320Z"/><circle class="c-tire" cx="750" cy="290" r="70" pathLength="1"/><circle class="c-rim" cx="750" cy="290" r="49" pathLength="1"/><circle class="c-rim c-rim--thin" cx="750" cy="290" r="30"/><circle class="c-hub" cx="750" cy="290" r="8"/><path class="c-spoke" d="M748.7 278.1L746.9 244.1M751.3 278.1L753.1 244.1M761.0 285.1L792.7 272.8M761.7 287.5L794.6 278.8M758.0 298.9L779.5 325.3M756.0 300.4L774.4 329.0M744.0 300.4L725.6 329.0M742.0 298.9L720.5 325.3M738.3 287.5L705.4 278.8M739.0 285.1L707.3 272.8"/>
-        <path class="c-tail" d="M860 168C872 166 882 168 890 173"/>
-        <path class="c-head" d="M84 206C100 196 130 190 176 186" filter="url(#car-glow)"/>
+        <ellipse class="c-shadow" cx="502" cy="360" rx="470" ry="13" fill="url(#car-shadow)"/>
+        <path class="c-beam" d="M54 226L-760 268L-760 360L54 250Z" fill="url(#car-beam)" filter="url(#car-blur)"/>
+        <path class="c-body" d="M82 328L62 326C50 325 44 319 43 310L39 284C37 268 40 254 48 242C56 231 70 223 90 218C170 204 262 192 340 184C380 156 430 112 478 92C530 74 600 70 650 74C740 82 822 112 878 148C900 160 930 162 950 160C956 160 960 162 961 166C966 186 968 214 964 238C960 268 956 300 946 316C940 324 932 328 920 328L829.2 328A78 78 0 1 0 690.8 328L289.2 328A78 78 0 1 0 150.8 328L82 328Z" pathLength="1"/>
+        <path class="c-glass" d="M362 180C398 152 440 116 486 100C540 86 600 84 646 88C724 96 790 120 838 150C700 158 520 170 362 180Z" pathLength="1"/>
+        <path class="c-pillar" d="M596 87L606 86L610 165L600 166Z"/>
+        <path class="c-line" d="M120 214C360 198 660 184 944 172" pathLength="1"/><path class="c-line" d="M300 306C450 304 560 302 690 300" pathLength="1"/><path class="c-line" d="M364 182C360 220 352 274 350 326" pathLength="1"/><path class="c-line" d="M606 166C607 220 608 276 610 326" pathLength="1"/><path class="c-line" d="M792 156C798 182 790 204 768 214" pathLength="1"/><path class="c-line" d="M44 292C66 294 94 295 124 296" pathLength="1"/>
+        <path class="c-line c-line--strong" d="M466 202L504 200M676 194L712 192"/>
+        <path class="c-mirror" d="M356 186C356 175 366 168 380 166L392 167C396 175 394 184 386 189L368 191C360 191 356 189 356 186Z" pathLength="1"/>
+        <path class="c-well" d="M150.8 328A78 78 0 1 1 289.2 328Z"/><circle class="c-tire" cx="220" cy="292" r="68" pathLength="1"/><circle class="c-rim" cx="220" cy="292" r="50" pathLength="1"/><circle class="c-rim c-rim--thin" cx="220" cy="292" r="31"/><circle class="c-hub" cx="220" cy="292" r="8"/><path class="c-spoke" d="M219.0 280.0L217.7 245.1M221.0 280.0L222.3 245.1M231.0 287.3L264.0 275.3M231.7 289.3L265.3 279.6M227.9 301.1L249.4 328.7M226.2 302.3L245.8 331.3M213.8 302.3L194.2 331.3M212.1 301.1L190.6 328.7M208.3 289.3L174.7 279.6M209.0 287.3L176.0 275.3"/>
+        <path class="c-well" d="M690.8 328A78 78 0 1 1 829.2 328Z"/><circle class="c-tire" cx="760" cy="292" r="68" pathLength="1"/><circle class="c-rim" cx="760" cy="292" r="50" pathLength="1"/><circle class="c-rim c-rim--thin" cx="760" cy="292" r="31"/><circle class="c-hub" cx="760" cy="292" r="8"/><path class="c-spoke" d="M759.0 280.0L757.7 245.1M761.0 280.0L762.3 245.1M771.0 287.3L804.0 275.3M771.7 289.3L805.3 279.6M767.9 301.1L789.4 328.7M766.2 302.3L785.8 331.3M753.8 302.3L734.2 331.3M752.1 301.1L730.6 328.7M748.3 289.3L714.7 279.6M749.0 287.3L716.0 275.3"/>
+        <path class="c-tail" d="M892 168C914 166 936 168 956 174"/>
+        <path class="c-head" d="M56 236C74 224 108 216 160 212" filter="url(#car-glow)"/>
       </svg>
       <ul class="hero__facts">
-          <li data-show-if-rating>
-            <span class="hero__facts-rating"><svg aria-hidden="true"><use href="#i-star"/></svg><strong data-bind="rating">4,6</strong></span>
-            <span>w&nbsp;opiniach Google</span>
-          </li>
-          <li><svg aria-hidden="true"><use href="#i-award"/></svg><span>Wyróżnienie Liderzy Jakości OTOMOTO</span></li>
-          <li><svg aria-hidden="true"><use href="#i-calendar"/></svg><span>Na Otomoto od 2006 roku</span></li>
-        </ul>
+        <li><svg aria-hidden="true"><use href="#i-thumb"/></svg><span>Klienci nas polecają</span></li>
+        <li><svg aria-hidden="true"><use href="#i-shield"/></svg><span>Gwarancja techniczna do 24 miesięcy</span></li>
+        <li><svg aria-hidden="true"><use href="#i-wheel"/></svg><span>Bezpłatna jazda próbna</span></li>
+      </ul>
     </div>
   </section>
 
@@ -249,12 +252,40 @@
     </div>
   </section>
 
+  <!-- ================================================================ POZNAJ NASZĄ OFERTĘ -->
+  <section class="offer" id="poznaj-oferte" aria-labelledby="offer-title">
+    <div class="offer__hero">
+      <video class="offer__video" data-offer-video muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="offer__shade" aria-hidden="true"></div>
+      <div class="wrap offer__intro">
+        <h2 class="h2" id="offer-title">Poznaj naszą ofertę</h2>
+        <p class="offer__lead">Oferujemy starannie wyselekcjonowane samochody dopasowane do różnych potrzeb i stylu życia. Nasza oferta jest stale aktualizowana, aby zapewnić dostęp do najlepszych modeli.</p>
+        <div class="offer__actions">
+          <a class="btn btn--gold btn--lg" href="#oferta">Zobacz dostępne auta</a>
+          <a class="btn btn--ghost btn--lg" href="https://www.youtube.com/watch?v=jQN-iTO20rs" data-link="youtubeVideo" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-play"/></svg>Obejrzyj film</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap offer__body">
+      <ul class="offer__points">
+        <li><svg aria-hidden="true"><use href="#i-swap"/></svg><p>Masz samochód na sprzedaż? Istnieje możliwość pozostawienia go w rozliczeniu, pod warunkiem pozytywnej weryfikacji jego stanu i historii.</p></li>
+        <li><svg aria-hidden="true"><use href="#i-shield"/></svg><p>Dla jeszcze większego spokoju oferujemy możliwość wykupienia gwarancji technicznej nawet do 24 miesięcy.</p></li>
+        <li><svg aria-hidden="true"><use href="#i-search"/></svg><p>Nie znalazłeś auta, którego szukasz? Skontaktuj się z nami. Pomożemy znaleźć odpowiedni samochód i dołożymy wszelkich starań, aby pojawił się w naszej ofercie.</p></li>
+        <li><svg aria-hidden="true"><use href="#i-wheel"/></svg><p>Zapraszamy na bezpłatną jazdę próbną i przekonaj się, że wybór samochodu może być prosty, bezpieczny i przyjemny.</p></li>
+      </ul>
+      <div class="offer__gallery" data-gallery-wrap hidden>
+        <h3 class="offer__gallery-title">Auta, które sprzedaliśmy</h3>
+        <ul class="sold" data-gallery></ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ================================================================ DLACZEGO -->
   <section class="section section--gravel" id="o-nas" aria-labelledby="dlaczego-title">
     <div class="wrap why">
       <div class="why__intro">
         <h2 class="h2" id="dlaczego-title">Co zyskujesz, kupując u&nbsp;nas?</h2>
-        <p>To rodzinna firma, przekazywana z pokolenia na pokolenie. Na zaufaniu klientów pracujemy od lat, dlatego na każdym naszym aucie jest tablica z naszym nazwiskiem.</p>
+        <p>Jesteśmy rodzinną firmą, w której motoryzacja przechodzi z pokolenia na pokolenie. Danek &amp; Syn to lata doświadczenia, setki sprzedanych samochodów i przede wszystkim zaufanie klientów, na które pracujemy każdego dnia.</p>
         <blockquote class="why__quote">
           <p>Znamy się na autach, ale jeszcze lepiej znamy się na ludziach.</p>
           <footer>Danek &amp; Syn</footer>
@@ -279,8 +310,8 @@
           <p>Auta z importu są po wszystkich opłatach celno-skarbowych i gotowe do rejestracji.</p>
         </li>
         <li class="why__item">
-          <h3>Wracasz już kupionym autem</h3>
-          <p>Do domu jedziesz swoim nowym samochodem, na jego własnych kołach. Bez lawety.</p>
+          <h3>Szczegółowo sprawdzamy samochód</h3>
+          <p>Przed zakupem możemy wykonać dla Ciebie szczegółową weryfikację pojazdu i przygotować raport, żebyś wiedział, co kupujesz.</p>
         </li>
         <li class="why__item">
           <h3>Jazda próbna przed decyzją</h3>
@@ -325,16 +356,11 @@
         <h2 class="h2" id="opinie-title">Opinie i wyróżnienia</h2>
       </div>
       <div class="proof">
-        <div class="proof__rating" data-show-if-rating>
-          <p class="proof__score" data-bind="rating">4,6</p>
-          <div class="proof__rating-meta">
-            <span class="stars" data-stars style="--pct: 92%" aria-hidden="true">
-              <span class="stars__base"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
-              <span class="stars__fill"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span>
-            </span>
-            <p>Średnia ocen w Google, <span data-bind="rating-count">82 opinie</span></p>
-            <a class="btn btn--ghost btn--compact" href="#" data-link="googleReviews" target="_blank" rel="noopener">Przeczytaj opinie w Google<svg aria-hidden="true"><use href="#i-external"/></svg></a>
-          </div>
+        <div class="proof__rating proof__rating--text">
+          <svg class="proof__icon" aria-hidden="true"><use href="#i-thumb"/></svg>
+          <p class="proof__claim">Klienci nas polecają</p>
+          <p class="proof__sub">Zobacz, co piszą o nas w Google.</p>
+          <a class="btn btn--ghost btn--compact" href="#" data-link="googleReviews" target="_blank" rel="noopener">Przeczytaj opinie w Google<svg aria-hidden="true"><use href="#i-external"/></svg></a>
         </div>
 
         <ul class="proof__list">
@@ -472,7 +498,7 @@
             </div>
             <div>
               <dt>E-mail</dt>
-              <dd><a href="mailto:samochody.danek@interia.pl">samochody.danek@interia.pl</a></dd>
+              <dd><a href="mailto:samochody.danek_syn@o2.pl">samochody.danek_syn@o2.pl</a></dd>
             </div>
           </dl>
 
@@ -521,7 +547,7 @@
     <div>
       <h2 class="site-footer__h">Adres</h2>
       <p>ul. Raciborska 267<br>44-280 Rydułtowy</p>
-      <p><a href="tel:+48792624919">792&nbsp;624&nbsp;919</a><br><a href="mailto:samochody.danek@interia.pl">samochody.danek@interia.pl</a></p>
+      <p><a href="tel:+48792624919">792&nbsp;624&nbsp;919</a><br><a href="mailto:samochody.danek_syn@o2.pl">samochody.danek_syn@o2.pl</a></p>
     </div>
     <div>
       <h2 class="site-footer__h">Godziny</h2>
@@ -532,6 +558,7 @@
       <h2 class="site-footer__h">Na skróty</h2>
       <ul class="site-footer__links">
         <li><a href="#oferta">Katalog aut</a></li>
+        <li><a href="#poznaj-oferte">Poznaj naszą ofertę</a></li>
         <li><a href="#o-nas">O nas</a></li>
         <li><a href="#opinie">Opinie</a></li>
         <li><a href="#finansowanie">Finansowanie</a></li>
@@ -558,6 +585,14 @@
 
 <!-- Szczegóły auta (wypełniane przez skrypt) -->
 <dialog class="dialog" id="car-dialog" aria-labelledby="dlg-title"></dialog>
+
+<dialog class="lightbox" data-lightbox aria-label="Zdjęcie z galerii">
+  <button class="round-btn lightbox__close" type="button" data-lb-close aria-label="Zamknij"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  <button class="round-btn lightbox__nav lightbox__nav--prev" type="button" data-lb="-1" aria-label="Poprzednie zdjęcie"><svg aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+  <img class="lightbox__img" src="data:," alt="Samochód sprzedany przez komis Danek &amp; Syn">
+  <button class="round-btn lightbox__nav lightbox__nav--next" type="button" data-lb="1" aria-label="Następne zdjęcie"><svg aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+  <p class="lightbox__count" data-lb-count></p>
+</dialog>
 
 <div class="toast" data-toast role="status" aria-live="polite" hidden></div>
 

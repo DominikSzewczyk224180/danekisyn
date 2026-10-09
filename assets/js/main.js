@@ -639,8 +639,8 @@
   }
 
   /* ---------- Opinie klientów: płynnie przewijana taśma ---------- */
-  function initReviews() {
-    var Q = (C.reviews && C.reviews.quotes) || [];
+  function initReviews(list) {
+    var Q = list || [];
     var box = $("[data-reviews]"), track = $("[data-reviews-track]");
     if (!box || !track) return;
     if (!Q.length) { box.hidden = true; return; }
@@ -711,6 +711,80 @@
       pos = track.scrollLeft;
     });
     requestAnimationFrame(frame);
+  }
+
+  /* ---------- Poznaj naszą ofertę: film w tle ---------- */
+  function initOfferVideo() {
+    var v = $("[data-offer-video]");
+    var src = C.media && C.media.offerVideo;
+    if (!v) return;
+    if (!src || reduceMotion) { v.remove(); return; }
+    var started = false;
+    function start() {
+      if (started) return;
+      started = true;
+      var source = document.createElement("source");
+      source.src = src;
+      source.type = "video/mp4";
+      source.addEventListener("error", function () { v.remove(); });   // brak pliku: zostaje tło zastępcze
+      v.addEventListener("loadeddata", function () { v.classList.add("is-ready"); });
+      v.appendChild(source);
+      v.load();
+    }
+    function play() { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) {
+        en.forEach(function (e) {
+          if (!v.isConnected) return;
+          if (e.isIntersecting) { start(); play(); } else if (started) v.pause();
+        });
+      }, { rootMargin: "200px 0px" }).observe(v);
+    } else { start(); play(); }
+  }
+
+  /* ---------- Galeria sprzedanych aut z powiększaniem ---------- */
+  var lb = $("[data-lightbox]"), lbList = [], lbIndex = 0;
+  function lbShow(i) {
+    if (!lbList.length) return;
+    lbIndex = (i + lbList.length) % lbList.length;
+    $(".lightbox__img", lb).src = lbList[lbIndex];
+    $("[data-lb-count]", lb).textContent = lbList.length > 1 ? (lbIndex + 1) + " / " + lbList.length : "";
+  }
+  function initGallery(urls) {
+    var wrap = $("[data-gallery-wrap]"), list = $("[data-gallery]");
+    if (!wrap || !list || !lb) return;
+    if (!urls.length) { wrap.hidden = true; return; }
+    lbList = urls;
+    list.innerHTML = urls.map(function (u, i) {
+      return '<li><button class="sold__item" type="button" data-sold="' + i + '" aria-label="Powiększ zdjęcie ' + (i + 1) + '">' +
+        '<img src="' + esc(u) + '" alt="Samochód sprzedany przez komis ' + esc(B.name) + '" loading="lazy" decoding="async"></button></li>';
+    }).join("");
+    wrap.hidden = false;
+    $$(".lightbox__nav", lb).forEach(function (n) { n.hidden = urls.length < 2; });
+    list.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-sold]");
+      if (!b) return;
+      lbShow(+b.getAttribute("data-sold"));
+      lb.showModal();
+      document.documentElement.classList.add("is-locked");
+    });
+    lb.addEventListener("close", function () { document.documentElement.classList.remove("is-locked"); });
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb || e.target.closest("[data-lb-close]")) { lb.close(); return; }
+      var n = e.target.closest("[data-lb]");
+      if (n) lbShow(lbIndex + +n.getAttribute("data-lb"));
+    });
+    lb.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") lbShow(lbIndex + 1);
+      if (e.key === "ArrowLeft") lbShow(lbIndex - 1);
+    });
+    var sx = null;
+    lb.addEventListener("pointerdown", function (e) { sx = e.target.closest(".lightbox__img") ? e.clientX : null; });
+    lb.addEventListener("pointerup", function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 40) lbShow(lbIndex + (dx < 0 ? 1 : -1));
+    });
   }
 
   /* ---------- Social media: kafelki z config.js ---------- */
@@ -798,13 +872,23 @@
   updateStatus();
   setInterval(updateStatus, 60000);
   initPlate();
-  initReviews();
   initSocial();
+  initOfferVideo();
 
-  var fallback = function () { return { cars: (window.DANEK_INVENTORY || []).slice(), source: "published" }; };
-  var loading = window.DanekStore
-    ? window.DanekStore.load().then(function (r) {
-        return window.DanekStore.resolveCars(r.cars).then(function (cars) { return { cars: cars, source: r.source }; });
+  var fallback = function () {
+    return {
+      cars: (window.DANEK_INVENTORY || []).slice(),
+      galleryUrls: (window.DANEK_GALLERY || []).slice(),
+      reviews: (window.DANEK_REVIEWS || []).slice(),
+      source: "published"
+    };
+  };
+  var Store = window.DanekStore;
+  var loading = Store
+    ? Store.load().then(function (r) {
+        return Promise.all([Store.resolveCars(r.cars), Store.resolveRefs(r.gallery || [])]).then(function (res) {
+          return { cars: res[0], galleryUrls: res[1], reviews: r.reviews || [], source: r.source };
+        });
       })
     : Promise.resolve(fallback());
 
@@ -815,6 +899,8 @@
     renderCars();
     initDialog();
     initCalc();
+    initReviews(r.reviews);
+    initGallery(r.galleryUrls || []);
     injectSchema();
     fixOrphans(document.body);
     document.documentElement.classList.add("is-ready");

@@ -68,18 +68,56 @@
   <main class="wrap adm-main">
     <section class="adm-state" data-state aria-live="polite"></section>
 
-    <div class="adm-toolbar">
-      <div>
-        <h1 class="adm-title">Oferta aut</h1>
-        <p class="adm-sub" data-count></p>
-      </div>
-      <button class="btn btn--gold btn--lg" type="button" data-add><svg aria-hidden="true"><use href="#i-plus"/></svg>Dodaj auto</button>
+    <div class="adm-tabs" role="tablist" aria-label="Co chcesz edytować">
+      <button class="adm-tab" role="tab" type="button" data-tab="cars" aria-selected="true">Auta <span data-tab-count="cars"></span></button>
+      <button class="adm-tab" role="tab" type="button" data-tab="gallery" aria-selected="false">Galeria <span data-tab-count="gallery"></span></button>
+      <button class="adm-tab" role="tab" type="button" data-tab="reviews" aria-selected="false">Opinie <span data-tab-count="reviews"></span></button>
     </div>
 
-    <ol class="adm-list" data-list></ol>
-    <p class="adm-empty" data-empty hidden>Brak aut w ofercie. Dodaj pierwsze auto przyciskiem „Dodaj auto”.</p>
+    <section data-panel="cars">
+      <div class="adm-toolbar">
+        <div>
+          <h1 class="adm-title">Oferta aut</h1>
+          <p class="adm-sub" data-count></p>
+        </div>
+        <button class="btn btn--gold btn--lg" type="button" data-add><svg aria-hidden="true"><use href="#i-plus"/></svg>Dodaj auto</button>
+      </div>
 
-    <p class="adm-note">Kolejność na liście to kolejność „Polecane” na stronie. Zmiany zapisują się automatycznie na tym urządzeniu.</p>
+      <ol class="adm-list" data-list></ol>
+      <p class="adm-empty" data-empty hidden>Brak aut w ofercie. Dodaj pierwsze auto przyciskiem „Dodaj auto”.</p>
+
+      <p class="adm-note">Kolejność na liście to kolejność „Polecane” na stronie. Zmiany zapisują się automatycznie na tym urządzeniu.</p>
+    </section>
+
+    <section data-panel="gallery" hidden>
+      <div class="adm-toolbar">
+        <div>
+          <h1 class="adm-title">Galeria</h1>
+          <p class="adm-sub">Zdjęcia aut, które już sprzedaliście. Pokazują się w zakładce „Poznaj naszą ofertę”.</p>
+        </div>
+      </div>
+      <label class="adm-drop" data-gal-drop>
+        <input type="file" accept="image/*" multiple data-gal-files>
+        <svg aria-hidden="true"><use href="#i-upload"/></svg>
+        <strong>Dodaj zdjęcia do galerii</strong>
+        <span>Kliknij albo przeciągnij pliki tutaj. Możesz wybrać kilka naraz, zmniejszą się automatycznie.</span>
+      </label>
+      <p class="adm-progress" data-gal-progress role="status" hidden></p>
+      <ol class="adm-photos adm-photos--gallery" data-gal-list></ol>
+      <p class="adm-empty" data-gal-empty hidden>Galeria jest pusta. Dodaj zdjęcia aut, które już sprzedaliście.</p>
+    </section>
+
+    <section data-panel="reviews" hidden>
+      <div class="adm-toolbar">
+        <div>
+          <h1 class="adm-title">Opinie</h1>
+          <p class="adm-sub">Opinie klientów w przewijanej taśmie na stronie. Najlepiej kopiuj je z Google, a nazwisko skracaj do inicjału.</p>
+        </div>
+        <button class="btn btn--gold btn--lg" type="button" data-rev-add><svg aria-hidden="true"><use href="#i-plus"/></svg>Dodaj opinię</button>
+      </div>
+      <ol class="adm-list" data-rev-list></ol>
+      <p class="adm-empty" data-rev-empty hidden>Brak opinii. Dodaj pierwszą przyciskiem „Dodaj opinię”.</p>
+    </section>
   </main>
 </div>
 
@@ -184,6 +222,31 @@
       <button class="btn btn--ghost" type="button" data-ed-cancel>Anuluj</button>
       <button class="btn btn--gold" type="submit"><svg aria-hidden="true"><use href="#i-check"/></svg>Zapisz auto</button>
     </footer>
+  </form>
+</dialog>
+
+<!-- ================================================================ EDYTOR OPINII -->
+<dialog class="adm-modal adm-modal--form" data-rev-editor aria-labelledby="rev-title">
+  <form class="adm-modal__box" data-rev-form novalidate>
+    <h2 id="rev-title" data-rev-title>Nowa opinia</h2>
+    <div class="field">
+      <label for="r-author">Autor *</label>
+      <input class="input" id="r-author" name="author" placeholder="np. Agata K." autocomplete="off">
+      <p class="field__error" data-rerr="author" hidden>Wpisz autora, np. imię i pierwszą literę nazwiska.</p>
+    </div>
+    <div class="field">
+      <label for="r-car">Kupione auto (opcjonalnie)</label>
+      <input class="input" id="r-car" name="car" placeholder="np. Audi A4" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="r-text">Treść opinii *</label>
+      <textarea class="input textarea" id="r-text" name="body" rows="7"></textarea>
+      <p class="field__error" data-rerr="body" hidden>Wpisz treść opinii.</p>
+    </div>
+    <div class="adm-modal__actions">
+      <button class="btn btn--ghost" type="button" data-rev-cancel>Anuluj</button>
+      <button class="btn btn--gold" type="submit">Zapisz opinię</button>
+    </div>
   </form>
 </dialog>
 

@@ -55,7 +55,13 @@
   /* ---------- Oferta ---------- */
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
   function publishedCars() { return clone(window.DANEK_INVENTORY || []).map(normalize); }
+  function publishedGallery() { return clone(window.DANEK_GALLERY || []); }
+  function publishedReviews() {
+    var conf = (window.DANEK_CONFIG && window.DANEK_CONFIG.reviews && window.DANEK_CONFIG.reviews.quotes) || [];
+    return clone(window.DANEK_REVIEWS || conf);
+  }
   function publishedVersion() { return +window.DANEK_INVENTORY_VERSION || 0; }
+  function asState(x) { return Array.isArray(x) ? { cars: x, gallery: [], reviews: [] } : (x || {}); }
 
   // starszy format (image) zamieniamy na listę zdjęć
   function normalize(c) {
@@ -71,17 +77,28 @@
   function load() {
     return idbGet("meta", "inventory").then(function (local) {
       if (local && Array.isArray(local.cars) && local.updatedAt > publishedVersion()) {
-        return { cars: local.cars.map(normalize), source: "local", updatedAt: local.updatedAt };
+        return {
+          cars: local.cars.map(normalize),
+          gallery: Array.isArray(local.gallery) ? local.gallery : publishedGallery(),
+          reviews: Array.isArray(local.reviews) ? local.reviews : publishedReviews(),
+          source: "local", updatedAt: local.updatedAt
+        };
       }
       if (local) clearLocal().catch(function () {}); // te zmiany są już opublikowane
-      return { cars: publishedCars(), source: "published", updatedAt: publishedVersion() };
+      return { cars: publishedCars(), gallery: publishedGallery(), reviews: publishedReviews(), source: "published", updatedAt: publishedVersion() };
     }).catch(function () {
-      return { cars: publishedCars(), source: "published", updatedAt: publishedVersion(), storageError: true };
+      return { cars: publishedCars(), gallery: publishedGallery(), reviews: publishedReviews(), source: "published", updatedAt: publishedVersion(), storageError: true };
     });
   }
 
-  function saveLocal(cars) {
-    var meta = { cars: clone(cars.map(stripRuntime)), updatedAt: Date.now() };
+  function saveLocal(state) {
+    state = asState(state);
+    var meta = {
+      cars: clone((state.cars || []).map(stripRuntime)),
+      gallery: clone(state.gallery || []),
+      reviews: clone(state.reviews || []),
+      updatedAt: Date.now()
+    };
     return idbPut("meta", "inventory", meta).then(function () { return meta; });
   }
 
@@ -120,9 +137,12 @@
     urlCache = {};
   }
   // usuwa zdjęcia, których nie używa żadne auto (np. po usunięciu auta albo anulowaniu edycji)
-  function cleanupImages(cars) {
+  function cleanupImages(state) {
+    state = asState(state);
     var used = {};
-    cars.forEach(function (c) { (c.images || []).forEach(function (r) { if (isLocalRef(r)) used[r.slice(4)] = true; }); });
+    var mark = function (r) { if (isLocalRef(r)) used[r.slice(4)] = true; };
+    (state.cars || []).forEach(function (c) { (c.images || []).forEach(mark); });
+    (state.gallery || []).forEach(mark);
     return idbKeys("images").then(function (keys) {
       return Promise.all((keys || []).filter(function (k) { return !used[k]; }).map(function (k) {
         if (urlCache["idb:" + k]) { URL.revokeObjectURL(urlCache["idb:" + k]); delete urlCache["idb:" + k]; }
@@ -130,6 +150,7 @@
       }));
     });
   }
+  function resolveRefs(list) { return Promise.all((list || []).map(imageUrl)).then(function (u) { return u.filter(Boolean); }); }
   function resolveCars(cars) {
     return Promise.all(cars.map(function (c) {
       return Promise.all((c.images || []).map(imageUrl)).then(function (urls) {
@@ -223,43 +244,51 @@
     });
   }
 
-  function inventoryFile(cars, version) {
+  function inventoryFile(cars, gallery, reviews, version) {
     var stamp = new Date(version || Date.now()).toLocaleString("pl-PL");
     return "/* ==========================================================================\n" +
-      "   OFERTA AUT: plik wygenerowany przez panel admina (" + stamp + ").\n" +
+      "   OFERTA AUT, GALERIA I OPINIE: plik wygenerowany przez panel admina (" + stamp + ").\n" +
       "   Najwygodniej edytować w panelu (admin.html). Ręcznie też można, zachowując format.\n" +
       "   ========================================================================== */\n\n" +
       "window.DANEK_INVENTORY_VERSION = " + (version || 0) + ";\n\n" +
-      "window.DANEK_INVENTORY = " + JSON.stringify(cars, null, 2) + ";\n";
+      "window.DANEK_INVENTORY = " + JSON.stringify(cars, null, 2) + ";\n\n" +
+      "// Galeria: zdjęcia aut sprzedanych wcześniej\n" +
+      "window.DANEK_GALLERY = " + JSON.stringify(gallery || [], null, 2) + ";\n\n" +
+      "// Opinie klientów z Google pokazywane w przewijanej taśmie\n" +
+      "window.DANEK_REVIEWS = " + JSON.stringify(reviews || [], null, 2) + ";\n";
   }
 
   var PUBLISH_README =
     "JAK OPUBLIKOWAĆ OFERTĘ\n\n" +
     "1. Rozpakuj tę paczkę do głównego folderu strony (tam, gdzie leży index.html).\n" +
-    "   Zastąp plik assets/js/inventory.js i dodaj nowe zdjęcia z assets/img/cars/.\n" +
+    "   Zastąp plik assets/js/inventory.js i dodaj nowe zdjęcia z assets/img/cars/ i assets/img/gallery/.\n" +
     "2. Wyślij zmiany na GitHub (commit i push) albo przekaż paczkę osobie, która opiekuje się stroną.\n" +
     "3. Po kilku minutach oferta będzie widoczna dla wszystkich.\n" +
     "   Panel admina sam rozpozna, że zmiany zostały opublikowane.\n";
 
-  function exportZip(cars, version) {
+  function exportZip(state, version) {
+    state = asState(state);
     var files = [];
     var enc = new TextEncoder();
-    return Promise.all(cars.map(function (c) {
-      return Promise.all((c.images || []).map(function (ref) {
-        if (!isLocalRef(ref)) return ref;
-        return imageBlob(ref).then(function (b) {
-          if (!b) return null;
-          var ext = b.type === "image/webp" ? "webp" : b.type === "image/png" ? "png" : "jpg";
-          var path = "assets/img/cars/" + c.id + "-" + ref.slice(4) + "." + ext;
-          return blobBytes(b).then(function (bytes) { files.push({ name: path, data: bytes }); return path; });
-        });
-      })).then(function (paths) {
+    function toFile(ref, prefix) {
+      if (!isLocalRef(ref)) return Promise.resolve(ref);
+      return imageBlob(ref).then(function (b) {
+        if (!b) return null;
+        var ext = b.type === "image/webp" ? "webp" : b.type === "image/png" ? "png" : "jpg";
+        var path = "assets/img/" + prefix + "-" + ref.slice(4) + "." + ext;
+        return blobBytes(b).then(function (bytes) { files.push({ name: path, data: bytes }); return path; });
+      });
+    }
+    var carsJob = Promise.all((state.cars || []).map(function (c) {
+      return Promise.all((c.images || []).map(function (r) { return toFile(r, "cars/" + c.id); })).then(function (paths) {
         var out = stripRuntime(c);
         out.images = paths.filter(Boolean);
         return out;
       });
-    })).then(function (outCars) {
-      files.push({ name: "assets/js/inventory.js", data: enc.encode(inventoryFile(outCars, version)) });
+    }));
+    var galleryJob = Promise.all((state.gallery || []).map(function (r) { return toFile(r, "gallery/sprzedane"); }));
+    return Promise.all([carsJob, galleryJob]).then(function (res) {
+      files.push({ name: "assets/js/inventory.js", data: enc.encode(inventoryFile(res[0], res[1].filter(Boolean), state.reviews || [], version)) });
       files.push({ name: "JAK-OPUBLIKOWAC.txt", data: enc.encode(PUBLISH_README) });
       return makeZip(files);
     });
@@ -273,6 +302,7 @@
     imageUrl: imageUrl,
     cleanupImages: cleanupImages,
     resolveCars: resolveCars,
+    resolveRefs: resolveRefs,
     processImage: processImage,
     exportZip: exportZip,
     isLocalRef: isLocalRef,

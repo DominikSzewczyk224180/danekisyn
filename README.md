@@ -30,7 +30,9 @@ Co można zrobić:
 * dodać auto ze wszystkimi danymi i dowolną liczbą zdjęć (zdjęcia z telefonu same się zmniejszają do 1600 px),
 * zmienić kolejność zdjęć i wybrać zdjęcie główne,
 * edytować, duplikować, ukryć albo usunąć auto,
-* ustawić kolejność aut (to kolejność „Polecane” na stronie).
+* ustawić kolejność aut (to kolejność „Polecane” na stronie),
+* w zakładce **Galeria** dodawać same zdjęcia sprzedanych aut (pokazują się w „Poznaj naszą ofertę”),
+* w zakładce **Opinie** dodawać, poprawiać, usuwać i układać opinie klientów z przewijanej taśmy.
 
 ### Jak to działa na tym etapie (tryb lokalny)
 
@@ -45,6 +47,19 @@ Co można zrobić:
 PIN zapisany jest w `config.js` jako `pinHash`. Żeby go zmienić: otwórz `admin.html`, otwórz konsolę przeglądarki, wpisz `danekHash("nowyPIN")` i wynik wklej do `config.js`.
 
 PIN chroni panel przed przypadkowym wejściem. To nie jest zabezpieczenie przed włamaniem, ale na tym etapie panel i tak zapisuje dane tylko w przeglądarce osoby, która z niego korzysta.
+
+## Film w tle zakładki „Poznaj naszą ofertę”
+
+1. Pobierz ich film z YouTube (to film komisu) i wybierz z niego 15 do 25 sekund.
+2. Przygotuj lekką wersję bez dźwięku (ffmpeg):
+
+```
+ffmpeg -ss 00:00:03 -t 20 -i film.mp4 -an -vf "scale=1600:-2,fps=30" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart assets/video/oferta.mp4
+```
+
+3. Plik powinien mieć kilka MB (do ok. 8 MB). Wgraj go do repozytorium jako `assets/video/oferta.mp4`.
+
+Film włącza się sam (bez dźwięku, w pętli), gdy sekcja jest widoczna. Bez pliku sekcja pokazuje tło zastępcze. Przycisk „Obejrzyj film” prowadzi do pełnej wersji na YouTube.
 
 ## Podgląd na komputerze
 

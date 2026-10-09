@@ -144,9 +144,9 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
 .menu-toggle[aria-expanded="true"] .menu-toggle__open { display: none; }
 .menu-toggle[aria-expanded="true"] .menu-toggle__close { display: block; }
 
-@media (max-width: 1500px) {
-  .status--header { display: none; }
-}
+/* przy 7 zakładkach status w nagłówku się nie mieści: pokazujemy go w kontakcie, oknie auta i menu na telefonie */
+.status--header { display: none; }
+.nav a { white-space: nowrap; }
 @media (max-width: 1100px) {
   :root { --header-h: 68px; }
   .brand img { height: 40px; }
@@ -187,7 +187,8 @@ html.menu-open .site-header { background: var(--grafit); -webkit-backdrop-filter
 .hero__copy { grid-area: copy; align-self: center; min-width: 0; }
 .hero__stage { grid-area: stage; }
 .hero__title { font-size: clamp(3rem, 5.6vw, 5.1rem); line-height: .94; letter-spacing: -.01em; }
-.hero__lead { max-width: 33em; margin: 1.6rem 0 0; font-size: clamp(1.125rem, 1rem + .45vw, 1.35rem); line-height: 1.5; color: var(--mgla-jasna); }
+.hero__lead { max-width: 34em; margin: 1.5rem 0 0; font-size: clamp(1.0625rem, .98rem + .3vw, 1.2rem); line-height: 1.55; color: var(--mgla-jasna); }
+.hero__lead + .hero__lead { margin-top: .85rem; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2.25rem; }
 .hero__facts { grid-area: ground; position: relative; display: flex; flex-wrap: wrap; gap: 14px 40px; margin: 0; padding: 1.4rem 0 0; border-top: 1px solid rgba(243, 242, 238, .16); list-style: none; font-size: .9688rem; color: var(--mgla-jasna); }
 .hero__facts li { display: flex; align-items: center; gap: .55em; }
@@ -776,3 +777,50 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 
 .reviews__note a { color: var(--mgla); text-decoration-color: var(--line-2); }
 .reviews__note a:hover { color: var(--rama); }
+
+/* ---------- Poznaj naszą ofertę ---------- */
+.offer { position: relative; background: #272B30; }
+.offer__hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; align-items: end; min-height: clamp(460px, 64vh, 700px);
+  padding: clamp(72px, 9vw, 128px) 0 clamp(44px, 6vw, 76px);
+  background: radial-gradient(55% 70% at 82% 18%, rgba(231, 188, 48, .12), transparent 70%), linear-gradient(180deg, #1D2024, #272B30);
+}
+/* tło zastępcze, dopóki nie ma filmu: ich zdjęcie, mocno przyciemnione i rozmyte */
+.offer__hero::before { content: ""; position: absolute; inset: -24px; z-index: -3; background: url(../img/cars/ford-kuga.webp) 70% 40% / cover no-repeat; filter: blur(7px) saturate(.75); opacity: .32; }
+.offer__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+.offer__video.is-ready { opacity: 1; }
+.offer__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(18, 20, 23, .92) 0%, rgba(18, 20, 23, .72) 42%, rgba(18, 20, 23, .3) 100%), linear-gradient(0deg, #272B30 0%, rgba(39, 43, 48, 0) 38%); }
+.offer__intro .h2 { max-width: 12em; }
+.offer__lead { max-width: 36em; margin: 1.2rem 0 0; font-size: clamp(1.125rem, 1rem + .45vw, 1.35rem); line-height: 1.5; color: var(--rama); }
+.offer__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+.offer__body { padding-top: clamp(36px, 4vw, 56px); padding-bottom: var(--section-y); }
+.offer__points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.offer__points li { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: start; gap: 18px; padding: 24px 26px; border: 1px solid var(--line); border-radius: 6px; background: var(--antracyt); }
+.offer__points svg { width: 30px; height: 30px; margin-top: 2px; color: var(--szyld); }
+.offer__points p { margin: 0; font-size: 1.0625rem; line-height: 1.55; color: var(--mgla-jasna); }
+.offer__gallery { margin-top: clamp(48px, 6vw, 80px); }
+.offer__gallery-title { margin-bottom: 18px; font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.6rem); }
+.sold { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sold__item { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 4px; background: #1f2226; cursor: zoom-in; transition: border-color .2s; }
+.sold__item:hover { border-color: rgba(231, 188, 48, .6); }
+.sold__item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 760px) { .offer__points { grid-template-columns: minmax(0, 1fr); } .offer__actions .btn { width: 100%; } }
+
+/* ---------- Opinie: zamiast oceny liczbowej ---------- */
+.proof__rating--text { display: grid; justify-items: start; gap: 14px; }
+.proof__icon { width: 46px; height: 46px; color: var(--szyld); }
+.proof__claim { margin: 0; font: 600 clamp(2.6rem, 1.8rem + 2.4vw, 4rem)/.95 var(--font-cond); color: var(--rama); }
+.proof__sub { margin: 0; color: var(--mgla-jasna); }
+
+/* ---------- Powiększone zdjęcie z galerii ---------- */
+.lightbox { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgba(10, 11, 13, .95); color: var(--rama); }
+.lightbox[open] { display: grid; place-items: center; }
+.lightbox::backdrop { background: rgba(10, 11, 13, .85); }
+.lightbox__img { max-width: min(92vw, 1600px); max-height: 84vh; width: auto; height: auto; border-radius: 4px; object-fit: contain; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.lightbox__close, .lightbox__nav { position: fixed; z-index: 2; background: rgba(20, 22, 25, .85); }
+.lightbox__close { top: 16px; right: 16px; }
+.lightbox__nav { top: 50%; translate: 0 -50%; }
+.lightbox__nav--prev { left: 16px; }
+.lightbox__nav--next { right: 16px; }
+.lightbox__count { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom)); left: 50%; translate: -50% 0; margin: 0; font-size: .875rem; color: var(--mgla-jasna); }

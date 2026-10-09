@@ -166,3 +166,24 @@
 
 /* okno "Publikacja wkrótce" */
 .adm-soon__tag { display: inline-block; margin: 0 0 12px; padding: .25em .7em; border-radius: 6px; background: rgba(231, 188, 48, .16); color: var(--szyld) !important; font-size: .8125rem; font-weight: 700; }
+
+/* ---------- Zakładki panelu ---------- */
+.adm-tabs { display: flex; gap: 4px; margin: 0 0 24px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.adm-tab { position: relative; flex: none; padding: 14px 16px 13px; border: 0; background: none; color: var(--mgla-jasna); font: 600 1.0625rem/1 var(--font); cursor: pointer; }
+.adm-tab span { margin-left: .4em; padding: .2em .55em; border-radius: 999px; background: rgba(243, 242, 238, .1); font-size: .8125rem; color: var(--mgla-jasna); }
+.adm-tab:hover { color: var(--rama); }
+.adm-tab[aria-selected="true"] { color: var(--rama); }
+.adm-tab[aria-selected="true"]::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--szyld); }
+.adm-photos--gallery { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); margin-top: 20px; }
+
+/* ---------- Lista opinii ---------- */
+.adm-rev { display: grid; grid-template-columns: 44px 44px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 12px 16px 12px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--antracyt-2); }
+.adm-rev__avatar { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--szyld); color: var(--grafit); font: 700 1.25rem/1 var(--font-cond); }
+.adm-rev__text { display: -webkit-box; margin: 4px 0 0; overflow: hidden; color: var(--mgla-jasna); font-size: .9375rem; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.adm-modal--form { width: min(640px, calc(100% - 32px)); }
+.adm-modal--form .adm-modal__box { display: grid; gap: 14px; }
+.adm-modal--form .input { background: var(--antracyt-2); }
+@media (max-width: 900px) {
+  .adm-rev { grid-template-columns: 44px minmax(0, 1fr); grid-template-areas: "av info" "order actions"; gap: 10px 14px; padding: 12px; }
+  .adm-rev__avatar { grid-area: av; }
+}
