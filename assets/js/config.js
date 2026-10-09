@@ -46,9 +46,13 @@ window.DANEK_CONFIG = {
     count: null
   },
 
-  // Film w tle zakładki "Poznaj naszą ofertę": wgraj plik MP4 do assets/video/ (instrukcja w README)
+  // Film w tle zakładki "Poznaj naszą ofertę" (26 s bez dźwięku) i jego kadr startowy
   media: {
-    offerVideo: "assets/video/oferta.mp4"
+    offerVideo: [
+      { src: "assets/video/oferta.mp4", type: "video/mp4" },
+      { src: "assets/video/oferta.webm", type: "video/webm" }
+    ],
+    offerPoster: "assets/video/oferta-poster.webp"
   },
 
   // Panel admina (admin.html). Zmiana PIN-u: otwórz panel, w konsoli przeglądarki wpisz

@@ -716,19 +716,24 @@
   /* ---------- Poznaj naszą ofertę: film w tle ---------- */
   function initOfferVideo() {
     var v = $("[data-offer-video]");
-    var src = C.media && C.media.offerVideo;
     if (!v) return;
-    if (!src || reduceMotion) { v.remove(); return; }
+    var M = C.media || {};
+    var srcs = !M.offerVideo ? [] : Array.isArray(M.offerVideo) ? M.offerVideo : [{ src: M.offerVideo, type: "video/mp4" }];
+    if (M.offerPoster) { v.poster = M.offerPoster; v.classList.add("is-ready"); }
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (!srcs.length || reduceMotion || saveData) { if (!M.offerPoster) v.remove(); return; }
     var started = false;
     function start() {
       if (started) return;
       started = true;
-      var source = document.createElement("source");
-      source.src = src;
-      source.type = "video/mp4";
-      source.addEventListener("error", function () { v.remove(); });   // brak pliku: zostaje tło zastępcze
+      srcs.forEach(function (sv, i) {
+        var el = document.createElement("source");
+        el.src = sv.src;
+        if (sv.type) el.type = sv.type;
+        if (i === srcs.length - 1) el.addEventListener("error", function () { if (!M.offerPoster) v.remove(); });
+        v.appendChild(el);
+      });
       v.addEventListener("loadeddata", function () { v.classList.add("is-ready"); });
-      v.appendChild(source);
       v.load();
     }
     function play() { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
@@ -742,37 +747,63 @@
     } else { start(); play(); }
   }
 
-  /* ---------- Galeria sprzedanych aut z powiększaniem ---------- */
+  /* ---------- Galeria sprzedanych aut: przesuwający się pasek + przeglądarka zdjęć ---------- */
   var lb = $("[data-lightbox]"), lbList = [], lbIndex = 0;
   function lbShow(i) {
     if (!lbList.length) return;
     lbIndex = (i + lbList.length) % lbList.length;
     $(".lightbox__img", lb).src = lbList[lbIndex];
     $("[data-lb-count]", lb).textContent = lbList.length > 1 ? (lbIndex + 1) + " / " + lbList.length : "";
+    $$(".lightbox__thumb", lb).forEach(function (t, k) {
+      t.classList.toggle("is-active", k === lbIndex);
+      if (k === lbIndex) {
+        var strip = t.parentElement;
+        strip.scrollTo({ left: Math.max(0, t.offsetLeft - (strip.clientWidth - t.clientWidth) / 2), behavior: reduceMotion ? "auto" : "smooth" });
+      }
+    });
+  }
+  function lbOpen(i) {
+    lbShow(i);
+    if (!lb.open) lb.showModal();
+    document.documentElement.classList.add("is-locked");
   }
   function initGallery(urls) {
-    var wrap = $("[data-gallery-wrap]"), list = $("[data-gallery]");
-    if (!wrap || !list || !lb) return;
+    var wrap = $("[data-gallery-wrap]"), track = $("[data-gallery]");
+    if (!wrap || !track || !lb) return;
     if (!urls.length) { wrap.hidden = true; return; }
     lbList = urls;
-    list.innerHTML = urls.map(function (u, i) {
-      return '<li><button class="sold__item" type="button" data-sold="' + i + '" aria-label="Powiększ zdjęcie ' + (i + 1) + '">' +
-        '<img src="' + esc(u) + '" alt="Samochód sprzedany przez komis ' + esc(B.name) + '" loading="lazy" decoding="async"></button></li>';
-    }).join("");
+    var n = urls.length;
+    $("[data-gallery-count]").textContent = n + " " + plural(n, "zdjęcie", "zdjęcia", "zdjęć");
     wrap.hidden = false;
-    $$(".lightbox__nav", lb).forEach(function (n) { n.hidden = urls.length < 2; });
-    list.addEventListener("click", function (e) {
+    function item(u, i, hidden) {
+      return '<button class="gal-strip__item" type="button" data-sold="' + i + '"' +
+        (hidden ? ' tabindex="-1" aria-hidden="true"' : ' aria-label="Powiększ zdjęcie ' + (i + 1) + " z " + n + '"') + ">" +
+        '<img src="' + esc(u) + '" alt="' + (hidden ? "" : "Samochód sprzedany przez komis " + esc(B.name)) + '" loading="lazy" decoding="async"></button>';
+    }
+    // jeden komplet zdjęć musi wypełnić pasek; drugi, identyczny, daje płynną pętlę
+    var reps = Math.max(1, Math.ceil(1700 / (n * 300)));
+    var html = [], k;
+    for (k = 0; k < reps * 2; k++) urls.forEach(function (u, i) { html.push(item(u, i, k > 0)); });
+    track.innerHTML = html.join("");
+    track.style.setProperty("--dur", Math.max(24, n * reps * 6) + "s");
+    if (reduceMotion) track.classList.add("is-static");
+    var thumbs = $("[data-lb-thumbs]", lb);
+    thumbs.innerHTML = n > 1 ? urls.map(function (u, i) {
+      return '<button class="lightbox__thumb" type="button" data-lb-to="' + i + '" aria-label="Zdjęcie ' + (i + 1) + '"><img src="' + esc(u) + '" alt="" loading="lazy"></button>';
+    }).join("") : "";
+    $$(".lightbox__nav", lb).forEach(function (b) { b.hidden = n < 2; });
+    track.addEventListener("click", function (e) {
       var b = e.target.closest("[data-sold]");
-      if (!b) return;
-      lbShow(+b.getAttribute("data-sold"));
-      lb.showModal();
-      document.documentElement.classList.add("is-locked");
+      if (b) lbOpen(+b.getAttribute("data-sold"));
     });
+    $("[data-gallery-open]").addEventListener("click", function () { lbOpen(0); });
     lb.addEventListener("close", function () { document.documentElement.classList.remove("is-locked"); });
     lb.addEventListener("click", function (e) {
       if (e.target === lb || e.target.closest("[data-lb-close]")) { lb.close(); return; }
-      var n = e.target.closest("[data-lb]");
-      if (n) lbShow(lbIndex + +n.getAttribute("data-lb"));
+      var nav = e.target.closest("[data-lb]");
+      if (nav) lbShow(lbIndex + +nav.getAttribute("data-lb"));
+      var to = e.target.closest("[data-lb-to]");
+      if (to) lbShow(+to.getAttribute("data-lb-to"));
     });
     lb.addEventListener("keydown", function (e) {
       if (e.key === "ArrowRight") lbShow(lbIndex + 1);

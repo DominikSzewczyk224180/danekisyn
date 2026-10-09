@@ -50,16 +50,15 @@ PIN chroni panel przed przypadkowym wejściem. To nie jest zabezpieczenie przed 
 
 ## Film w tle zakładki „Poznaj naszą ofertę”
 
-1. Pobierz ich film z YouTube (to film komisu) i wybierz z niego 15 do 25 sekund.
-2. Przygotuj lekką wersję bez dźwięku (ffmpeg):
+Film jest już na stronie: `assets/video/oferta.mp4` i `oferta.webm` (26 s bez dźwięku, pierwsze ujęcia filmu komisu z Range Roverem) oraz kadr startowy `oferta-poster.webp`. Odtwarza się sam, w pętli, gdy sekcja jest widoczna. Przy włączonym oszczędzaniu danych albo ograniczonym ruchu zostaje sam kadr startowy.
+
+Żeby wymienić film, przygotuj nowe pliki o tych samych nazwach:
 
 ```
-ffmpeg -ss 00:00:03 -t 20 -i film.mp4 -an -vf "scale=1600:-2,fps=30" -c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart assets/video/oferta.mp4
+ffmpeg -ss 00:00:00 -t 26 -i film.mp4 -an -vf "scale=1280:-2,fps=30" -c:v libx264 -preset slow -crf 27 -pix_fmt yuv420p -movflags +faststart assets/video/oferta.mp4
+ffmpeg -ss 00:00:00 -t 26 -i film.mp4 -an -vf "scale=1280:-2,fps=30" -c:v libvpx-vp9 -b:v 0 -crf 40 -row-mt 1 assets/video/oferta.webm
+ffmpeg -ss 1 -i film.mp4 -frames:v 1 -vf "scale=1280:-2" assets/video/oferta-poster.webp
 ```
-
-3. Plik powinien mieć kilka MB (do ok. 8 MB). Wgraj go do repozytorium jako `assets/video/oferta.mp4`.
-
-Film włącza się sam (bez dźwięku, w pętli), gdy sekcja jest widoczna. Bez pliku sekcja pokazuje tło zastępcze. Przycisk „Obejrzyj film” prowadzi do pełnej wersji na YouTube.
 
 ## Podgląd na komputerze
 
