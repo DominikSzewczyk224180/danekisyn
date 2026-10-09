@@ -872,3 +872,8 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .lightbox__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .lightbox__thumb:hover { opacity: 1; }
 .lightbox__thumb.is-active { border-color: var(--szyld); opacity: 1; }
+
+/* zacisk hamulca w kołach auta w hero */
+.hero__car .c-caliper { fill: none; stroke: #C9A227; stroke-width: 6; stroke-linecap: round; opacity: .8; animation: car-fade .6s ease 2.1s backwards; }
+@keyframes car-fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hero__car .c-caliper { animation: none; } }

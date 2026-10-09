@@ -233,8 +233,17 @@ window.DANEK_INVENTORY = [
   }
 ];
 
-// Galeria: zdjęcia aut sprzedanych wcześniej (dodawane w panelu admina)
-window.DANEK_GALLERY = [];
+// Galeria: zdjęcia aut sprzedanych wcześniej (dodawane w panelu admina).
+// NA RAZIE DO TESTU: aktualne zdjęcia aut. Komis zastąpi je własnymi w panelu (zakładka Galeria).
+window.DANEK_GALLERY = [
+  "assets/img/cars/audi-q3.webp",
+  "assets/img/cars/ford-fiesta.webp",
+  "assets/img/cars/ford-kuga.webp",
+  "assets/img/cars/honda-civic.webp",
+  "assets/img/cars/nissan-qashqai.webp",
+  "assets/img/cars/opel-mokka.webp",
+  "assets/img/cars/seat-leon.webp"
+];
 
 // Opinie klientów z Google pokazywane w przewijanej taśmie (edycja w panelu admina)
 window.DANEK_REVIEWS = [
