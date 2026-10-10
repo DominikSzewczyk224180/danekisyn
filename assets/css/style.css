@@ -877,3 +877,27 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .hero__car .c-caliper { fill: none; stroke: #C9A227; stroke-width: 6; stroke-linecap: round; opacity: .8; animation: car-fade .6s ease 2.1s backwards; }
 @keyframes car-fade { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hero__car .c-caliper { animation: none; } }
+
+/* odblaski i detale lakieru auta w hero */
+.hero__car .c-sheen { fill: url(#car-sheen); animation: car-fade .9s ease 2s backwards; }
+.hero__car .c-chrome { fill: none; stroke: rgba(243, 242, 238, .5); stroke-width: 1.6; stroke-linecap: round; animation: car-fade .6s ease 2s backwards; }
+.hero__car .c-hl { fill: none; stroke: rgba(243, 242, 238, .16); stroke-width: 3; stroke-linecap: round; animation: car-fade .9s ease 2.1s backwards; }
+.hero__car .c-glint { animation: car-fade .9s ease 2.1s backwards; }
+.hero__car .c-glint path { fill: rgba(243, 242, 238, .06); }
+@media (prefers-reduced-motion: reduce) { .hero__car .c-sheen, .hero__car .c-chrome, .hero__car .c-hl, .hero__car .c-glint { animation: none; } }
+
+/* ---------- Auto w hero: wektor ze szkicu, koła własne ---------- */
+.hero__car--sketch .c-fill { fill: rgba(16, 18, 21, .68); }
+.hero__car--sketch .c-ink { fill: rgba(243, 242, 238, .58); }
+.hero__car--sketch .c-glass { fill: url(#car-glass); stroke: none; }
+.hero__car--sketch .c-well { fill: rgba(8, 9, 11, .94); }
+.hero__car--sketch .c-pillar { fill: rgba(10, 11, 13, .9); }
+.hero__car--sketch .c-headfill { fill: #FFE6A6; opacity: .92; }
+.hero__car--sketch .c-tailfill { fill: #E5735C; opacity: .85; }
+.hero__car.hero__car--sketch * { animation: none; }
+.hero__car.hero__car--sketch { animation: car-arrive 1.6s cubic-bezier(.16, .84, .3, 1) .2s backwards; }
+.hero__car.hero__car--sketch .c-roll { transform-box: fill-box; transform-origin: center; animation: car-roll 1.6s cubic-bezier(.16, .84, .3, 1) .2s backwards; }
+.hero__car.hero__car--sketch .c-headfill, .hero__car.hero__car--sketch .c-beam, .hero__car.hero__car--sketch .c-tailfill { animation: car-fade .6s ease 1.55s backwards; }
+@keyframes car-arrive { from { opacity: 0; transform: translateX(7%); } }
+@keyframes car-roll { from { transform: rotate(57deg); } }
+@media (prefers-reduced-motion: reduce) { .hero__car.hero__car--sketch, .hero__car.hero__car--sketch * { animation: none !important; } }
