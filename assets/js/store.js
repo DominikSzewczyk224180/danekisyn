@@ -349,7 +349,8 @@
   }
   function saveRemote(state, baseVersion) {
     var body = JSON.stringify({ cars: (state.cars || []).map(stripRuntime), gallery: state.gallery || [], reviews: state.reviews || [], baseVersion: baseVersion });
-    return apiFetch("oferta", { method: "PUT", headers: authHeaders({ "Content-Type": "application/json" }), body: body }, 20000);
+    // POST zamiast PUT: część hostingów blokuje metodę PUT, zanim zapytanie dotrze do PHP
+    return apiFetch("oferta", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: body }, 20000);
   }
   function uploadImage(blob) {
     var fd = new FormData();
