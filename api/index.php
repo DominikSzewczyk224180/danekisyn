@@ -11,7 +11,6 @@
      POST   logout                                     (z tokenem)
      PUT    oferta            { cars, gallery, reviews, baseVersion }  (z tokenem)
      POST   zdjecia           multipart: plik          -> { url }      (z tokenem)
-     POST   haslo             { old, new }                             (z tokenem)
    Token: nagłówek X-Auth-Token (albo Authorization: Bearer ...).
    ========================================================================== */
 declare(strict_types=1);
@@ -83,8 +82,7 @@ function lock_data()
 function client_ip(): string { return (string)($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'); }
 function current_hash(array $CFG): string
 {
-    $a = read_json(DATA . '/auth.json', []);
-    return (string)($a['hash'] ?? $CFG['password_hash']);
+    return (string)$CFG['password_hash'];   // hasło zmienia się tylko w config.php
 }
 function active_sessions(): array
 {
@@ -280,18 +278,6 @@ if ($route === 'zdjecia' && $method === 'POST') {
     if (!move_uploaded_file($f['tmp_name'], $dir . '/' . $name)) fail('Nie udało się zapisać zdjęcia', 500);
     @chmod($dir . '/' . $name, 0644);
     out(['url' => UPLOADS_URL . '/' . $sub . '/' . $name], 201);
-}
-
-if ($route === 'haslo' && $method === 'POST') {
-    require_auth();
-    $b = body();
-    $old = (string)($b['old'] ?? ''); $new = (string)($b['new'] ?? '');
-    if (!password_verify($old, current_hash($CFG))) fail('Obecne hasło jest nieprawidłowe', 403);
-    if (strlen($new) < 10) fail('Nowe hasło musi mieć co najmniej 10 znaków', 400);
-    $lock = lock_data();
-    write_json(DATA . '/auth.json', ['hash' => password_hash($new, PASSWORD_DEFAULT), 'changedAt' => time()]);
-    write_json(DATA . '/sessions.json', []);   // wylogowuje wszystkie urządzenia
-    out(['ok' => true]);
 }
 
 fail('Nie ma takiej trasy', 404);

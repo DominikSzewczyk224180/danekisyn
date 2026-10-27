@@ -7,7 +7,7 @@ return [
         'https://www.samochodydanekisyn.pl',
         'https://dominikszewczyk224180.github.io',
     ],
-    // hasło do panelu admina (zapisany tylko hash). Po wdrożeniu można je zmienić w panelu: „Zmień hasło”.
+    // hasło do panelu admina (zapisany tylko hash). Zmienia się je wyłącznie tutaj, w panelu nie ma takiej opcji.
     'password_hash' => '$2y$10$At3wZuBwZHbT.XX6gEWnfuBxvfzzlmoSrYuRN17sqITiVRNfwwj2O',
     // gdzie API trzyma dane i zdjęcia
     'data_dir' => __DIR__ . '/data',

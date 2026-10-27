@@ -17,8 +17,9 @@ PIERWSZE URUCHOMIENIE
 - Jeśli na danym urządzeniu są zmiany z wersji demo, panel zaproponuje przeniesienie ich na serwer.
 
 HASŁO
-- Hasło startowe jest przekazane osobno. Zmiana: w panelu przycisk „Zmień hasło”.
-- Zapomniane hasło: usuń plik data/auth.json, wtedy znów działa hasło startowe z config.php.
+- Hasło do panelu ustawia się tylko w config.php (password_hash). W panelu nie ma opcji zmiany hasła.
+- Nowe hasło: wygeneruj hash, np. poleceniem  php -r 'echo password_hash("NOWE_HASLO", PASSWORD_DEFAULT);'
+  i wklej go do config.php. Żeby od razu wylogować wszystkie urządzenia, usuń plik data/sessions.json.
 
 KOPIE ZAPASOWE
 - Każdy zapis tworzy kopię poprzedniej wersji w data/backups (40 ostatnich).
