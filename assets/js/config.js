@@ -55,6 +55,12 @@ window.DANEK_CONFIG = {
     offerPoster: "assets/video/oferta-poster.webp"
   },
 
+  // Backend: panel admina zapisuje zmiany na serwerze, a strona czyta z niego ofertę.
+  // Pusty adres = tryb lokalny (zmiany tylko w przeglądarce, jak w wersji demo).
+  api: {
+    base: "https://api.samochodydanekisyn.pl/index.php"
+  },
+
   // Panel admina (admin.html). Zmiana PIN-u: otwórz panel, w konsoli przeglądarki wpisz
   // danekHash("nowyPIN") i wynik wklej poniżej.
   admin: {

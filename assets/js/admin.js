@@ -6,6 +6,7 @@
 
   var C = window.DANEK_CONFIG;
   var S = window.DanekStore;
+  var API_MODE = !!(S && S.mode === "api");
 
   /* ---------- Narzędzia ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -54,29 +55,51 @@
   }
   window.danekHash = hash; // w konsoli: danekHash("nowyPIN") i wynik wpisz do config.js
   var SESSION = "danek-admin";
-  function authed() { try { return sessionStorage.getItem(SESSION) === "1"; } catch (e) { return false; } }
+  function authed() {
+    if (API_MODE) return S.hasToken();
+    try { return sessionStorage.getItem(SESSION) === "1"; } catch (e) { return false; }
+  }
   function setAuthed(on) { try { if (on) sessionStorage.setItem(SESSION, "1"); else sessionStorage.removeItem(SESSION); } catch (e) {} }
 
   var loginEl = $("[data-login]"), appEl = $("[data-app]");
-  function showApp() { loginEl.hidden = true; appEl.hidden = false; load(); }
+  function showApp() {
+    loginEl.hidden = true; appEl.hidden = false;
+    if (API_MODE && st.unsaved) { render(); toast("Zalogowano. Kliknij „Zapisz ponownie”, żeby wysłać zmiany."); }
+    else load();
+  }
   function showLogin() {
     appEl.hidden = true; loginEl.hidden = false;
     setTimeout(function () { $("#adm-pin").focus(); }, 30);
   }
   $("[data-login-form]").addEventListener("submit", function (e) {
     e.preventDefault();
-    var pin = $("#adm-pin").value.trim();
+    var input = $("#adm-pin"), err = $("[data-login-err]"), btn = this.querySelector("button[type=submit]");
+    var pin = input.value.trim();
+    if (API_MODE) {
+      if (!pin) { err.textContent = "Wpisz hasło."; err.hidden = false; return; }
+      btn.disabled = true;
+      S.login(pin).then(function () {
+        err.hidden = true; input.value = ""; showApp();
+      }).catch(function (x) {
+        err.textContent = x.status === 401 ? "Nieprawidłowe hasło. Spróbuj ponownie." : x.message;
+        err.hidden = false; input.select();
+      }).then(function () { btn.disabled = false; });
+      return;
+    }
     if (pin && C.admin && hash(pin) === C.admin.pinHash) {
       setAuthed(true);
-      $("[data-login-err]").hidden = true;
-      $("#adm-pin").value = "";
+      err.hidden = true;
+      input.value = "";
       showApp();
     } else {
-      $("[data-login-err]").hidden = false;
-      $("#adm-pin").select();
+      err.hidden = false;
+      input.select();
     }
   });
-  $("[data-logout]").addEventListener("click", function () { setAuthed(false); showLogin(); });
+  $("[data-logout]").addEventListener("click", function () {
+    if (API_MODE) { S.logout().then(showLogin); return; }
+    setAuthed(false); showLogin();
+  });
 
   /* ---------- Stan ---------- */
   var st = { cars: [], gallery: [], reviews: [], source: "published", updatedAt: 0, storageError: false };
@@ -93,11 +116,26 @@
       st.source = r.source;
       st.updatedAt = r.updatedAt;
       st.storageError = !!r.storageError;
-      return loadThumbs();
+      st.version = r.version || 0;
+      st.apiError = r.apiError || null;
+      st.unsaved = false;
+      return loadThumbs().then(checkDemoData);
     }).then(render);
   }
 
   function save(message) {
+    if (API_MODE) {
+      st.saving = true; renderState();
+      return S.saveRemote(dataState(), st.version).then(function (d) {
+        st.version = d.version; st.updatedAt = d.updatedAt; st.source = "api";
+        st.saving = false; st.unsaved = false;
+        return loadThumbs();
+      }).then(function () {
+        render();
+        if (message) toast(message);
+        return true;
+      }).catch(function (err) { st.saving = false; apiFailure(err); return false; });
+    }
     return S.saveLocal(dataState()).then(function (meta) {
       st.source = "local";
       st.updatedAt = meta.updatedAt;
@@ -117,6 +155,35 @@
   }
   function renderState() {
     var el = $("[data-state]");
+    if (API_MODE) {
+      if (st.apiError) {
+        el.className = "adm-state adm-state--error";
+        el.innerHTML = '<div class="adm-state__text"><h2>Brak połączenia z serwerem</h2>' +
+          "<p>Nie udało się wczytać oferty z serwera. Sprawdź internet i spróbuj ponownie. Do tego czasu zmiany nie zostaną zapisane.</p></div>" +
+          '<div class="adm-state__actions"><button class="btn btn--gold" type="button" data-reload>Spróbuj ponownie</button></div>';
+        return;
+      }
+      if (st.unsaved) {
+        el.className = "adm-state adm-state--error";
+        el.innerHTML = '<div class="adm-state__text"><h2>Niezapisane zmiany</h2>' +
+          "<p>Ostatnia zmiana nie dotarła na serwer. Sprawdź internet i zapisz ponownie.</p></div>" +
+          '<div class="adm-state__actions"><button class="btn btn--gold" type="button" data-resave>' + icon("i-upload") + "Zapisz ponownie</button></div>";
+        return;
+      }
+      if (st.demo) {
+        el.className = "adm-state adm-state--local";
+        el.innerHTML = '<div class="adm-state__text"><h2>Zmiany z wersji demo</h2>' +
+          "<p>W tej przeglądarce są auta, zdjęcia i opinie dodane w wersji demo. Możesz je teraz przenieść na serwer, wtedy zobaczą je wszyscy.</p></div>" +
+          '<div class="adm-state__actions"><button class="btn btn--gold" type="button" data-migrate>' + icon("i-upload") + "Przenieś na serwer</button>" +
+          '<button class="btn btn--ghost" type="button" data-demo-skip>Pomiń</button></div>';
+        return;
+      }
+      el.className = "adm-state";
+      el.innerHTML = '<div class="adm-state__text"><h2>' + (st.saving ? "Zapisuję zmiany…" : "Oferta na serwerze") + "</h2>" +
+        "<p>" + (st.updatedAt ? "Ostatnia zmiana: " + esc(when(st.updatedAt)) + ". " : "") + "Każda zmiana zapisuje się od razu i widzą ją wszyscy odwiedzający stronę.</p></div>" +
+        '<div class="adm-state__actions"><button class="btn btn--ghost" type="button" data-password-open>Zmień hasło</button></div>';
+      return;
+    }
     if (st.storageError) {
       el.className = "adm-state adm-state--error";
       el.innerHTML = '<div class="adm-state__text"><h2>Ta przeglądarka nie zapisuje danych</h2>' +
@@ -481,7 +548,7 @@
     var chain = Promise.resolve();
     files.forEach(function (f) {
       chain = chain.then(function () {
-        return S.processImage(f).then(S.saveImage).then(function (ref) {
+        return S.processImage(f).then(S.storeImage).then(function (ref) {
           if (edit) { edit.images.push(ref); renderPhotos(); }
         }).catch(function () { failed.push(f.name); }).then(function () {
           done++;
@@ -583,7 +650,7 @@
     var chain = Promise.resolve();
     files.forEach(function (f) {
       chain = chain.then(function () {
-        return S.processImage(f).then(S.saveImage).then(function (ref) { st.gallery.push(ref); })
+        return S.processImage(f).then(S.storeImage).then(function (ref) { st.gallery.push(ref); })
           .catch(function () { failed.push(f.name); })
           .then(function () { done++; prog.textContent = "Przygotowuję zdjęcia: " + done + " z " + files.length; });
       });
@@ -659,6 +726,90 @@
     if (a === "down" && i < R.length - 1) { R.splice(i + 1, 0, R.splice(i, 1)[0]); save(); }
     if (a === "delete" && window.confirm("Usunąć opinię: " + R[i].author + "?")) { R.splice(i, 1); save("Opinia usunięta"); }
   });
+
+  /* ---------- Serwer: błędy, zmiana hasła, przeniesienie wersji demo ---------- */
+  function apiFailure(err) {
+    if (window.console) console.error(err);
+    if (err.status === 401) {
+      st.unsaved = true;
+      S.logout();
+      showLogin();
+      toast("Sesja wygasła. Zaloguj się ponownie, a potem kliknij „Zapisz ponownie”.");
+      return;
+    }
+    if (err.status === 409) { toast(err.message); load(); return; }
+    st.unsaved = true;
+    render();
+    toast(err.status === 0 ? "Brak połączenia z serwerem. Zmiany nie zostały zapisane." : err.message);
+  }
+  function checkDemoData() {
+    st.demo = null;
+    if (!API_MODE || st.version !== 0 || !S.localSnapshot) return Promise.resolve();
+    try { if (sessionStorage.getItem("danek-demo-skip") === "1") return Promise.resolve(); } catch (e) {}
+    return S.localSnapshot().then(function (snap) { st.demo = snap; });
+  }
+  function migrateDemo() {
+    var snap = st.demo;
+    if (!snap) return;
+    var btn = $("[data-migrate]");
+    if (btn) btn.disabled = true;
+    toast("Przenoszę zmiany z wersji demo na serwer…");
+    function conv(ref) {
+      if (!S.isLocalRef(ref)) return Promise.resolve(ref);
+      return S.imageBlobOf(ref).then(function (b) { return b ? S.uploadImage(b) : null; });
+    }
+    var cars = snap.cars;
+    cars.reduce(function (p, c) {
+      return p.then(function () { return Promise.all((c.images || []).map(conv)).then(function (u) { c.images = u.filter(Boolean); }); });
+    }, Promise.resolve()).then(function () {
+      return Promise.all((snap.gallery || []).map(conv));
+    }).then(function (g) {
+      st.cars = cars; st.gallery = g.filter(Boolean); st.reviews = snap.reviews || st.reviews;
+      return save("Zmiany z wersji demo są już na serwerze");
+    }).then(function (ok) {
+      if (ok) { st.demo = null; S.clearLocal(); render(); }
+      else if (btn) btn.disabled = false;
+    }).catch(function (err) { if (btn) btn.disabled = false; apiFailure(err); });
+  }
+  $("[data-state]").addEventListener("click", function (e) {
+    if (e.target.closest("[data-reload]")) load();
+    if (e.target.closest("[data-resave]")) save("Zapisano zmiany na serwerze");
+    if (e.target.closest("[data-migrate]")) migrateDemo();
+    if (e.target.closest("[data-demo-skip]")) {
+      try { sessionStorage.setItem("danek-demo-skip", "1"); } catch (x) {}
+      st.demo = null; renderState();
+    }
+    if (e.target.closest("[data-password-open]")) {
+      var f = $("[data-password-form]");
+      f.reset(); $("[data-pw-err]").hidden = true;
+      $("[data-password]").showModal();
+      setTimeout(function () { $("#pw-old").focus(); }, 30);
+    }
+  });
+  var pwForm = $("[data-password-form]");
+  if (pwForm) {
+    $("[data-pw-cancel]").addEventListener("click", function () { $("[data-password]").close(); });
+    pwForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var el = pwForm.elements, err = $("[data-pw-err]");
+      var oldPw = el.namedItem("old").value, n1 = el.namedItem("new").value, n2 = el.namedItem("new2").value;
+      function show(msg) { err.textContent = msg; err.hidden = false; }
+      if (n1.length < 10) return show("Nowe hasło musi mieć co najmniej 10 znaków.");
+      if (n1 !== n2) return show("Nowe hasła się różnią.");
+      var btn = pwForm.querySelector("button[type=submit]"); btn.disabled = true;
+      S.changePassword(oldPw, n1).then(function () {
+        $("[data-password]").close();
+        S.logout();
+        showLogin();
+        toast("Hasło zmienione. Zaloguj się nowym hasłem.");
+      }).catch(function (x) { show(x.message); }).then(function () { btn.disabled = false; });
+    });
+  }
+  if (API_MODE) {
+    var lbl = $('label[for="adm-pin"]'); if (lbl) lbl.textContent = "Hasło";
+    var pinIn = $("#adm-pin"); pinIn.setAttribute("inputmode", "text");
+    var lead = $(".adm-login__box > p"); if (lead) lead.textContent = "Wpisz hasło, żeby zarządzać ofertą aut.";
+  }
 
   /* ---------- Start ---------- */
   if (!S) { document.body.innerHTML = "<p style='padding:24px'>Brak pliku store.js.</p>"; return; }

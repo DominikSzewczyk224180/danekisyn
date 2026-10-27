@@ -74,7 +74,7 @@
     return c;
   }
 
-  function load() {
+  function localLoad() {
     return idbGet("meta", "inventory").then(function (local) {
       if (local && Array.isArray(local.cars) && local.updatedAt > publishedVersion()) {
         return {
@@ -137,7 +137,7 @@
     urlCache = {};
   }
   // usuwa zdjęcia, których nie używa żadne auto (np. po usunięciu auta albo anulowaniu edycji)
-  function cleanupImages(state) {
+  function cleanupLocal(state) {
     state = asState(state);
     var used = {};
     var mark = function (r) { if (isLocalRef(r)) used[r.slice(4)] = true; };
@@ -294,7 +294,95 @@
     });
   }
 
+
+  /* ---------- Tryb serwerowy: api.samochodydanekisyn.pl ---------- */
+  var API = (window.DANEK_CONFIG && window.DANEK_CONFIG.api && window.DANEK_CONFIG.api.base) || "";
+  var TOKEN_KEY = "danek-api-token";
+  function apiUrl(route) { return API + (API.indexOf("?") === -1 ? "?r=" : "&r=") + route; }
+  function apiFetch(route, opts, timeoutMs) {
+    opts = opts || {};
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, timeoutMs || 8000) : 0;
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(apiUrl(route), opts).then(function (res) {
+      clearTimeout(timer);
+      return res.text().then(function (txt) {
+        var data = null;
+        try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
+        if (!res.ok) {
+          var err = new Error((data && data.error) || "Błąd serwera (" + res.status + ")");
+          err.status = res.status;
+          throw err;
+        }
+        return data;
+      });
+    }, function () {
+      clearTimeout(timer);
+      var err = new Error("Brak połączenia z serwerem");
+      err.status = 0;
+      throw err;
+    });
+  }
+  function getToken() { try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; } }
+  function setToken(t) { try { if (t) sessionStorage.setItem(TOKEN_KEY, t); else sessionStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+  function authHeaders(extra) { var h = extra || {}; h["X-Auth-Token"] = getToken(); return h; }
+  function publishedState(extra) {
+    var o = { cars: publishedCars(), gallery: publishedGallery(), reviews: publishedReviews(), source: "published", version: 0, updatedAt: 0 };
+    Object.keys(extra || {}).forEach(function (k) { o[k] = extra[k]; });
+    return o;
+  }
+  function remoteLoad(timeoutMs) {
+    return apiFetch("oferta", { cache: "no-cache" }, timeoutMs).then(function (d) {
+      if (!d || d.empty || !Array.isArray(d.cars)) return publishedState();
+      return { cars: d.cars.map(normalize), gallery: d.gallery || [], reviews: d.reviews || [], source: "api", version: d.version || 0, updatedAt: d.updatedAt || 0 };
+    });
+  }
+  function login(password) {
+    return apiFetch("login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: password }) })
+      .then(function (d) { setToken(d.token); return d; });
+  }
+  function logout() {
+    var had = getToken();
+    var req = had ? apiFetch("logout", { method: "POST", headers: authHeaders() }).catch(function () {}) : Promise.resolve();
+    setToken("");
+    return req;
+  }
+  function saveRemote(state, baseVersion) {
+    var body = JSON.stringify({ cars: (state.cars || []).map(stripRuntime), gallery: state.gallery || [], reviews: state.reviews || [], baseVersion: baseVersion });
+    return apiFetch("oferta", { method: "PUT", headers: authHeaders({ "Content-Type": "application/json" }), body: body }, 20000);
+  }
+  function uploadImage(blob) {
+    var fd = new FormData();
+    var ext = blob.type === "image/webp" ? "webp" : blob.type === "image/png" ? "png" : "jpg";
+    fd.append("plik", blob, "zdjecie." + ext);
+    return apiFetch("zdjecia", { method: "POST", headers: authHeaders(), body: fd }, 90000).then(function (d) { return d.url; });
+  }
+  function changePassword(oldPw, newPw) {
+    return apiFetch("haslo", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ old: oldPw, new: newPw }) });
+  }
+  // zmiany zrobione wcześniej w wersji demo (w tej przeglądarce), do przeniesienia na serwer
+  function localSnapshot() {
+    return idbGet("meta", "inventory").then(function (m) { return m && Array.isArray(m.cars) ? m : null; }).catch(function () { return null; });
+  }
+
+  function load(opts) {
+    if (!API) return localLoad();
+    return remoteLoad((opts && opts.timeout) || 3500).catch(function (e) { return publishedState({ apiError: e.message || "błąd" }); });
+  }
+  function storeImage(blob) { return API ? uploadImage(blob) : saveImage(blob); }
+  function cleanupImages(state) { return API ? Promise.resolve() : cleanupLocal(state); }
+
   window.DanekStore = {
+    mode: API ? "api" : "local",
+    login: login,
+    logout: logout,
+    hasToken: function () { return !!getToken(); },
+    saveRemote: saveRemote,
+    storeImage: storeImage,
+    uploadImage: uploadImage,
+    changePassword: changePassword,
+    localSnapshot: localSnapshot,
+    imageBlobOf: imageBlob,
     load: load,
     saveLocal: saveLocal,
     clearLocal: clearLocal,

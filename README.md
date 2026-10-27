@@ -34,15 +34,19 @@ Co można zrobić:
 * w zakładce **Galeria** dodawać same zdjęcia sprzedanych aut (pokazują się w „Poznaj naszą ofertę”),
 * w zakładce **Opinie** dodawać, poprawiać, usuwać i układać opinie klientów z przewijanej taśmy.
 
-### Jak to działa na tym etapie (tryb lokalny)
+### Zapis na serwerze (api.samochodydanekisyn.pl)
 
-* Zmiany zapisują się w przeglądarce, w której używasz panelu. Na tym urządzeniu strona od razu je pokazuje.
-* Inni odwiedzający widzą opublikowaną ofertę z `assets/js/inventory.js`.
-* Przycisk **Opublikuj zmiany** pokazuje komisowi komunikat „Publikacja będzie dostępna wkrótce” (bez technicznych szczegółów).
-* Dla opiekuna strony: otwórz panel pod adresem `admin.html?dev`. Wtedy ten sam przycisk pozwala pobrać paczkę ZIP z nowym `assets/js/inventory.js` i zdjęciami. Rozpakuj ją do repozytorium (zastąp pliki), zrób commit i push. Po kilku minutach oferta jest widoczna dla wszystkich, a panel sam rozpozna, że zmiany zostały opublikowane. Paczkę pobiera się na tym urządzeniu, na którym zmiany zostały wprowadzone.
-* Dane lokalne mogą zniknąć po wyczyszczeniu danych przeglądarki, dlatego zmiany warto publikować od razu.
+* Panel admina zapisuje każdą zmianę od razu na serwerze. Klienci widzą ją po odświeżeniu strony.
+* Zdjęcia aut i galerii trafiają na serwer (`api.samochodydanekisyn.pl/uploads`), panel zmniejsza je przed wysłaniem.
+* Strona czyta ofertę z serwera. Gdy serwer nie odpowiada, pokazuje ostatnią opublikowaną ofertę z `assets/js/inventory.js`.
+* Adres serwera ustawiasz w `config.js` (`api.base`). Pusty adres to tryb lokalny, jak w wersji demo (zmiany tylko w przeglądarce).
+* Backend jest w osobnej paczce `api-samochodydanekisyn.zip` z instrukcją wdrożenia.
 
-### PIN
+### Hasło
+
+W trybie serwerowym logowanie odbywa się hasłem sprawdzanym przez serwer, a zmienia się je w panelu (przycisk „Zmień hasło”). PIN poniżej dotyczy tylko trybu lokalnego.
+
+### PIN (tryb lokalny)
 
 PIN zapisany jest w `config.js` jako `pinHash`. Żeby go zmienić: otwórz `admin.html`, otwórz konsolę przeglądarki, wpisz `danekHash("nowyPIN")` i wynik wklej do `config.js`.
 
