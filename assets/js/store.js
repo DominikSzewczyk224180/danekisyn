@@ -357,9 +357,6 @@
     fd.append("plik", blob, "zdjecie." + ext);
     return apiFetch("zdjecia", { method: "POST", headers: authHeaders(), body: fd }, 90000).then(function (d) { return d.url; });
   }
-  function changePassword(oldPw, newPw) {
-    return apiFetch("haslo", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ old: oldPw, new: newPw }) });
-  }
   // zmiany zrobione wcześniej w wersji demo (w tej przeglądarce), do przeniesienia na serwer
   function localSnapshot() {
     return idbGet("meta", "inventory").then(function (m) { return m && Array.isArray(m.cars) ? m : null; }).catch(function () { return null; });
@@ -380,7 +377,6 @@
     saveRemote: saveRemote,
     storeImage: storeImage,
     uploadImage: uploadImage,
-    changePassword: changePassword,
     localSnapshot: localSnapshot,
     imageBlobOf: imageBlob,
     load: load,

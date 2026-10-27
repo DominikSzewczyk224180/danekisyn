@@ -44,7 +44,7 @@ Co można zrobić:
 
 ### Hasło
 
-W trybie serwerowym logowanie odbywa się hasłem sprawdzanym przez serwer, a zmienia się je w panelu (przycisk „Zmień hasło”). PIN poniżej dotyczy tylko trybu lokalnego.
+W trybie serwerowym logowanie odbywa się hasłem sprawdzanym przez serwer. Hasło zmienia się tylko w pliku `config.php` na serwerze API, w panelu nie ma takiej opcji. PIN poniżej dotyczy tylko trybu lokalnego.
 
 ### PIN (tryb lokalny)
 

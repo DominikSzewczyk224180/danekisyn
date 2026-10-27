@@ -180,8 +180,7 @@
       }
       el.className = "adm-state";
       el.innerHTML = '<div class="adm-state__text"><h2>' + (st.saving ? "Zapisuję zmiany…" : "Oferta na serwerze") + "</h2>" +
-        "<p>" + (st.updatedAt ? "Ostatnia zmiana: " + esc(when(st.updatedAt)) + ". " : "") + "Każda zmiana zapisuje się od razu i widzą ją wszyscy odwiedzający stronę.</p></div>" +
-        '<div class="adm-state__actions"><button class="btn btn--ghost" type="button" data-password-open>Zmień hasło</button></div>';
+        "<p>" + (st.updatedAt ? "Ostatnia zmiana: " + esc(when(st.updatedAt)) + ". " : "") + "Każda zmiana zapisuje się od razu i widzą ją wszyscy odwiedzający stronę.</p></div>";
       return;
     }
     if (st.storageError) {
@@ -779,32 +778,7 @@
       try { sessionStorage.setItem("danek-demo-skip", "1"); } catch (x) {}
       st.demo = null; renderState();
     }
-    if (e.target.closest("[data-password-open]")) {
-      var f = $("[data-password-form]");
-      f.reset(); $("[data-pw-err]").hidden = true;
-      $("[data-password]").showModal();
-      setTimeout(function () { $("#pw-old").focus(); }, 30);
-    }
   });
-  var pwForm = $("[data-password-form]");
-  if (pwForm) {
-    $("[data-pw-cancel]").addEventListener("click", function () { $("[data-password]").close(); });
-    pwForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var el = pwForm.elements, err = $("[data-pw-err]");
-      var oldPw = el.namedItem("old").value, n1 = el.namedItem("new").value, n2 = el.namedItem("new2").value;
-      function show(msg) { err.textContent = msg; err.hidden = false; }
-      if (n1.length < 10) return show("Nowe hasło musi mieć co najmniej 10 znaków.");
-      if (n1 !== n2) return show("Nowe hasła się różnią.");
-      var btn = pwForm.querySelector("button[type=submit]"); btn.disabled = true;
-      S.changePassword(oldPw, n1).then(function () {
-        $("[data-password]").close();
-        S.logout();
-        showLogin();
-        toast("Hasło zmienione. Zaloguj się nowym hasłem.");
-      }).catch(function (x) { show(x.message); }).then(function () { btn.disabled = false; });
-    });
-  }
   if (API_MODE) {
     var lbl = $('label[for="adm-pin"]'); if (lbl) lbl.textContent = "Hasło";
     var pinIn = $("#adm-pin"); pinIn.setAttribute("inputmode", "text");
