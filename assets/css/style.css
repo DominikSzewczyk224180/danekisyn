@@ -711,7 +711,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 @media (max-width: 1100px) { .contact .map > * { min-height: 340px; } }
 
 /* ---------- Stopka: wejście do panelu ---------- */
-.site-footer__admin { margin-left: 18px; color: var(--mgla); }
+.site-footer__admin { color: var(--mgla); }
 
 
 .site-footer__company { flex-basis: 100%; }
